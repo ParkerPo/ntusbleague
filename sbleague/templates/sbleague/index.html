@@ -1,0 +1,219 @@
+{% extends "basic.html" %}
+{% block content %}	
+
+{% if league_list %}
+	<div class="container">
+	
+		<div id="fb-root"></div>
+		<script>(function(d, s, id) {
+		  var js, fjs = d.getElementsByTagName(s)[0];
+		  if (d.getElementById(id)) return;
+		  js = d.createElement(s); js.id = id;
+		  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+		  fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));</script>
+
+		<div class="row">
+			<div class="table-title">戰績排行榜</div>
+			{% for league in league_list %}
+				<div class="col-md-6">	
+					<table class="table table-hover table-bordered table-condensed">
+						<caption class="table-title">{{league.name}}</caption>
+						<thead>
+							<tr>
+								<th>隊名</th>
+								<th>已賽</th>
+								<th>勝</th>
+								<th>負</th>
+								<th>和</th>
+								<th>勝率</th>
+								<th>勝差</th>
+							</tr>
+						</thead>
+						<tbody>
+						{% for team in league.team_list %}
+							<tr>
+								<td><a href="/team/{{team.teamID}}">{{team.name}}</a></td>
+								<td>{{team.game_played}}</td>
+								<td>{{team.win}}</td>
+								<td>{{team.lose}}</td>
+								<td>{{team.tie}}</td>
+								<td>{{team.percent}}</td>
+								<td>{{team.GB}}</td>
+							</tr>
+						{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% endfor %}
+		</div>
+
+		<div class="row">
+			<div class="table-title">打擊排行榜</div>
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>打擊率</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in avg_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.avg}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>安打</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in hit_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.hit}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>全壘打</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in hr_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.hr}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>打點</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in rbi_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.rbi}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+		
+		<div class="row">
+			<div class="table-title">投手排行榜</div>
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>勝投</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in win_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.win}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>自責分率</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in era_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.era}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>奪三振</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in so_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.so}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+			<div class="col-md-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan='3'>被上壘率</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for player in whip_list %}
+						<tr>
+							<td><a href="/team/{{player.team.teamID}}">{{player.team.name}}</a></td>
+							<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+							<td>{{player.whip}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+
+
+	
+
+	<div class="fb-like-box" data-href="https://www.facebook.com/NTUSBLeague" data-width="400" data-height="300" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="true" data-show-border="true"></div>
+
+	</div> <!-- end of container -->
+	
+{% endif %}
+{% endblock content %}
