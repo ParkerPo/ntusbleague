@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^batting/(?P<order>\w+)/$',views.allbatting , name='allbatting'),
     url(r'^pitching/(?P<order>\w+)/$',views.allpitching , name='allpitching'),
     url(r'^game/(?P<game_id>\d+)/$',views.game,name='game'),
-    url(r'^game$',views.game, name='allgame'),
+    url(r'^game$',views.allgame, name='allgame'),
     url(r'^login$',views.login,name='login'),
     url(r'^logout$',views.logout,name='logout')
 ]

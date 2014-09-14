@@ -229,13 +229,13 @@ def team(request , team_id) :
 
 		team_info.game_played += 1
 
-		score_array = game.get_scores()
+		scores = game.get_scores()
 
 		g.gameID 	= game.gameID
 		g.date 		= game.date
 		g.location 	= game.location
 		g.opp 		= opp
-		g.scores 	= str(sum(score_array[0])) + ' : ' + str(sum(score_array[1]))
+		g.scores 	= str(sum(scores[0])) + ' : ' + str(sum(scores[1]))
 		g.result 	= result
 		game_list.append(g)
 
@@ -460,11 +460,15 @@ def people(request , member_id) :
 
 	return render(request, 'sbleague/people.html', context)
 
-def allgame(required):
-	game_list = Game.objects.all(order_by = ['-date'])
+def allgame(request):
+	game_list = Game.objects.all().order_by('-date')
+
+	for game in game_list:
+		scores = game.get_scores()
+		game.scores = str(sum(scores[0])) + ' : ' + str(sum(scores[1]))
 
 	context = {'game_list': game_list}
-	return render(required, 'sbleague/allgame.html', context)
+	return render(request, 'sbleague/allgame.html', context)
 
 def game(request , game_id) :
 

@@ -135,3 +135,4 @@ class Batting(models.Model):
 
 	def calculate_AB(self):
 		self.ab = self.pa - self.bb - self.sf
+
