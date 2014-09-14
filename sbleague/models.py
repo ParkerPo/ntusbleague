@@ -136,3 +136,12 @@ class Batting(models.Model):
 	def calculate_AB(self):
 		self.ab = self.pa - self.bb - self.sf
 
+class Schedule(models.Model):
+	date = models.DateField(blank=True)
+	time = models.TimeField(blank=True)
+	location = models.CharField(max_length=200)
+	away = models.ForeignKey(Team, related_name = "away_team")
+	home = models.ForeignKey(Team, related_name = "home_team")
+
+	def __unicode__(self):
+		return  self.away.name + ' vs ' + self.home.name + '  ' + str(self.date)

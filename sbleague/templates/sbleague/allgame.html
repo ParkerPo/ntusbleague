@@ -15,61 +15,67 @@
 
 {% block content %}
 	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan="5" class="table-title">預定賽程</th>
+						</tr>
+						<tr>
+							<th>日期</th>
+							<th>時間</th>
+							<th>地點</th>
+							<th>客隊</th>
+							<th>主隊</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for game in schedule %}
+						<tr>
+							<td>{{game.date}}</td>
+							<td>{{game.time}}</td>
+							<td>{{game.location}}</td>
+							<td><a href="/team/{{game.away.teamID}}">{{game.away.name}}</a></td>
+							<td><a href="/team/{{game.home.teamID}}">{{game.home.name}}</a></td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		
+		</div>
 
-		<div class="col-md-6 col-md-offset-3">
-			<table class="table table-hover table-bordered fixed-width table-condensed">
-				<thead>
-					<tr>
-						<th colspan="5" class="table-title">預定賽程</th>
-					</tr>
-					<tr>
-						<th>日期</th>
-						<th>地點</th>
-						<th>客隊</th>
-						<th>主隊</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for game in game_list %}
-					<tr>
-						<td><a href="/game/{{game.gameID}}">{{game.date}}</a></td>
-						<td>{{game.location}}</td>
-						<td><a href="/team/{{game.away.teamID}}">{{game.away.name}}</a></td>
-						<td><a href="/team/{{game.home.teamID}}">{{game.home.name}}</a></td>
-						<td>{{game.scores}}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+				<table class="table table-hover table-bordered fixed-width table-condensed">
+					<thead>
+						<tr>
+							<th colspan="5" class="table-title">已賽賽程</th>
+						</tr>
+						<tr>
+							<th>日期</th>
+							<th>地點</th>
+							<th>客隊</th>
+							<th>主隊</th>
+							<th>比分</th>
+						</tr>
+					</thead>
+					<tbody>
+					{% for game in game_list %}
+						<tr>
+							<td><a href="/game/{{game.gameID}}">{{game.date}}</a></td>
+							<td>{{game.location}}</td>
+							<td><a href="/team/{{game.away.teamID}}">{{game.away.name}}</a></td>
+							<td><a href="/team/{{game.home.teamID}}">{{game.home.name}}</a></td>
+							<td>{{game.scores}}</td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
-		<div class="col-md-6 col-md-offset-3">
-			<table class="table table-hover table-bordered fixed-width table-condensed">
-				<thead>
-					<tr>
-						<th colspan="5" class="table-title">已賽賽程</th>
-					</tr>
-					<tr>
-						<th>日期</th>
-						<th>地點</th>
-						<th>客隊</th>
-						<th>主隊</th>
-						<th>比分</th>
-					</tr>
-				</thead>
-				<tbody>
-				{% for game in game_list %}
-					<tr>
-						<td><a href="/game/{{game.gameID}}">{{game.date}}</a></td>
-						<td>{{game.location}}</td>
-						<td><a href="/team/{{game.away.teamID}}">{{game.away.name}}</a></td>
-						<td><a href="/team/{{game.home.teamID}}">{{game.home.name}}</a></td>
-						<td>{{game.scores}}</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-			</table>
-		</div>
+		
 	</div>
 
 

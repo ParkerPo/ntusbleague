@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render, redirect
-from models import Team,Member,Game,Pitching,Batting
+from models import Team,Member,Game,Pitching,Batting,Schedule
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from data import Hitter, Pitcher, TeamStat, GameStat, League
@@ -461,13 +461,16 @@ def people(request , member_id) :
 	return render(request, 'sbleague/people.html', context)
 
 def allgame(request):
+
+	schedule = Schedule.objects.all().order_by('-date')
+
 	game_list = Game.objects.all().order_by('-date')
 
 	for game in game_list:
 		scores = game.get_scores()
 		game.scores = str(sum(scores[0])) + ' : ' + str(sum(scores[1]))
 
-	context = {'game_list': game_list}
+	context = {'schedule': schedule, 'game_list': game_list}
 	return render(request, 'sbleague/allgame.html', context)
 
 def game(request , game_id) :
