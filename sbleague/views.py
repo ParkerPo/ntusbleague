@@ -740,3 +740,5 @@ def login(request):
 def logout(request):
 	out_account(request)
 	return index(request)
+
+
