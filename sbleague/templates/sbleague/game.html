@@ -27,6 +27,16 @@
 				</tbody>
 			</table>
 		</div>	
+		{% if request.user.is_authenticated %}
+		<div class = "col-md-offset-11">
+			<a href="/modgame/{{game.gameID}}">
+				<button type="button" class="btn btn-default ">
+	 				<span class="glyphicon glyphicon-edit"></span> 修改
+				</button>
+			</a>
+		</div>
+		{% endif %}
+		
 	</div>
 
 	<div class="row">
