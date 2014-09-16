@@ -741,4 +741,17 @@ def logout(request):
 	out_account(request)
 	return index(request)
 
+def mod(request,game_id):
+	if request.method !='POST' :
+		return redirect("/")
+	else :
+		game = Game.objects.get(gameID = game_id)
+		button=request.POST.get("button","")
+		if button == "header" :
+			game.location=request.POST.get("location","")
+			game.date=request.POST.get("date","")
+			game.save()
+
+		return redirect("/game/"+str(game_id))
+
 
