@@ -10,6 +10,27 @@
 
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">	
+
+		{% if request.user.is_authenticated %}
+		<div class="dorpdown">
+			<div class="btn-group col-md-offset-11">
+				<a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="/modgame/{{game.gameID}}">
+					<span class="glyphicon glyphicon-edit"></span> 修改
+				</a>
+				<div class="dropdown-menu">
+					<form action="/mod/{{game.gameID}}" method="POST" role="form">
+					{% csrf_token %} 
+						<div class="form-group">
+						日期 : <input class="form-control short" type="date" name="date" value="{{game.date |date:"Y-m-d"}}">
+						<label for="location">地點：</label>
+						<input class="form-control " type="text" name="location" value="{{game.location}}">
+						<button type="submit" class="btn btn-default btn-xs" name="button" value="header">修改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		{% endif %}
 			<table class="table table-condensed table-bordered table-hover">
 				<tbody>
 					<tr>
@@ -26,11 +47,62 @@
 					</tr>
 				</tbody>
 			</table>
+
 		</div>	
 	</div>
 
 	<div class="row">
 		<div class="col-md-6 col-md-offset-3">
+
+		{% if request.user.is_authenticated %}
+		<div class="dorpdown">
+			<div class="btn-group col-md-offset-11">
+				<a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="/modgame/{{game.gameID}}">
+					<span class="glyphicon glyphicon-edit"></span> 修改
+				</a>
+				<div class="dropdown-menu">
+					<form action="/mod/{{game.gameID}}" method="POST" role="form">
+					{% csrf_token %} 
+						<div class="form-group">
+						<table class="table table-condensed table-bordred table hover">
+							<thead>
+								<tr>
+									<th>1</th>
+									<th>2</th>
+									<th>3</th>
+									<th>4</th>
+									<th>5</th>
+									<th>6</th>
+									<th>7</th>
+									<th>R</th>
+									<th>H</th>
+									<th>E</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									{% for score in away_scores %}
+									<th><input id="s" type="text" value="{{score}}" name="away_{{forloop.count}}"></th>
+									
+									{% endfor %}
+									<th></th>
+									<th></th>	
+								</tr>
+								<tr>
+									<th></th>
+									<th></th>
+									<th></th>
+									<th></th>
+								</tr>
+							</tbody>
+						</table>
+						<button type="submit" class="btn btn-default btn-xs" name="button" value="gamebox">修改</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		{% endif %}
 			<table class="table table-condensed table-bordered table-hover">
 				<thead>
 					<tr>

@@ -12,7 +12,6 @@ table{
 	table-layout: fixed;
 }
 
-
 .table-title{
 	text-align: center;
 	font-size: 20px;
@@ -70,3 +69,12 @@ table{
 .button{
 	text-align: center;
 }
+
+.s{
+	width : 20px;
+}
+
+.short{
+	width : 110px;
+}
+
