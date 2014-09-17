@@ -63,6 +63,8 @@
 				<div class="dropdown-menu">
 					<form action="/mod/{{game.gameID}}" method="POST" role="form">
 					{% csrf_token %} 
+					<input type="hidden" name="home" value="{{game.home.teamID}}">
+					<input type="hidden" name="away" value="{{game.away.teamID}}">
 						<div class="form-group">
 						<table class="table table-condensed table-bordred table hover">
 							<thead>
@@ -82,17 +84,21 @@
 							<tbody>
 								<tr>
 									{% for score in away_scores %}
-									<th><input id="s" type="text" value="{{score}}" name="away_{{forloop.count}}"></th>
+									<th><input class="s" type="text" value="{{score}}" name="score_{{game.away.teamID}}_{{forloop.counter}}"></th>
 									
 									{% endfor %}
-									<th></th>
-									<th></th>	
+									<th><input class="s" type="text" value="{{away_R}}" name="away_R"></th>
+									<th><input class="s" type="text" value="{{away_H}}" name="away_H"></th>
+									<th><input class="s" type="text" value="{{away_E}}" name="away_E"></th>
 								</tr>
 								<tr>
-									<th></th>
-									<th></th>
-									<th></th>
-									<th></th>
+									{% for score in home_scores %}
+									<th><input class="s" type="text" value="{{score}}" name="score_{{game.home.teamID}}_{{forloop.counter}}"></th>
+									
+									{% endfor %}
+									<th><input class="s" type="text" value="{{home_R}}" name="home_R"></th>
+									<th><input class="s" type="text" value="{{home_H}}" name="home_H"></th>
+									<th><input class="s" type="text" value="{{home_E}}" name="home_E"></th>
 								</tr>
 							</tbody>
 						</table>
@@ -162,6 +168,9 @@
 						<th class="form-td">保送</th>
 						<th class="form-td">三振</th>
 						<th class="form-td">犧牲</th>
+						{% if request.user.is_authenticated %}
+						<th class="form-td">修改</th>
+						{% endif %}
 					</tr>					
 				</thead>
 				<tbody>
@@ -179,6 +188,27 @@
 						<td class="form-td">{{player.bb}}</td>
 						<td class="form-td">{{player.so}}</td>
 						<td class="form-td">{{player.sf}}</td>
+						{% if request.user.is_authenticated %}
+							<div class="dorpdown">
+								<div class="btn-group col-md-offset-11">
+									<a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="/modgame/{{game.gameID}}">
+										<span class="glyphicon glyphicon-edit"></span>
+									</a>
+									<div class="dropdown-menu">
+										<form action="/mod/{{game.gameID}}" method="POST" role="form">
+										{% csrf_token %} 
+											<div class="form-group">
+											日期 : <input class="form-control short" type="date" name="date" value="{{game.date |date:"Y-m-d"}}">
+											<label for="location">地點：</label>
+											<input class="form-control " type="text" name="location" value="{{game.location}}">
+											<button type="submit" class="btn btn-default btn-xs" name="button" value="mod_bat">修改</button>
+											<button type="submit" class="btn btn-default btn-xs" name="button" value="del_bat">刪除</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						{% endif %}
 					</tr>
 					{% endfor %}
 				</tbody>

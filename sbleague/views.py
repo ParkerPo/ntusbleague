@@ -751,6 +751,18 @@ def mod(request,game_id):
 			game.location=request.POST.get("location","")
 			game.date=request.POST.get("date","")
 			game.save()
+		elif button == "gamebox" : 
+			away=request.POST.get("away","")
+			home=request.POST.get("home","")
+			game.scorebox=get_boxscore_from_web(request,away,home)
+			game.away_R = request.POST.get("away_R","")
+			game.away_H = request.POST.get("away_H","")
+			game.away_E = request.POST.get("away_E","")
+			game.home_R = request.POST.get("home_R","")
+			game.home_H = request.POST.get("home_H","")
+			game.home_E = request.POST.get("home_E","")
+			game.save()
+
 
 		return redirect("/game/"+str(game_id))
 
