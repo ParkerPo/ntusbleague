@@ -14,6 +14,7 @@ from django.http import HttpResponse
 import mimetypes, os
 from django.core.servers.basehttp import FileWrapper
 
+
 # Create your views here.
 def index(request) : 
 
