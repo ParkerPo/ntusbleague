@@ -189,25 +189,25 @@
 						<td class="form-td">{{player.so}}</td>
 						<td class="form-td">{{player.sf}}</td>
 						{% if request.user.is_authenticated %}
-							<div class="dorpdown">
-								<div class="btn-group col-md-offset-11">
-									<a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="/modgame/{{game.gameID}}">
-										<span class="glyphicon glyphicon-edit"></span>
-									</a>
-									<div class="dropdown-menu">
-										<form action="/mod/{{game.gameID}}" method="POST" role="form">
-										{% csrf_token %} 
-											<div class="form-group">
-											日期 : <input class="form-control short" type="date" name="date" value="{{game.date |date:"Y-m-d"}}">
-											<label for="location">地點：</label>
-											<input class="form-control " type="text" name="location" value="{{game.location}}">
-											<button type="submit" class="btn btn-default btn-xs" name="button" value="mod_bat">修改</button>
-											<button type="submit" class="btn btn-default btn-xs" name="button" value="del_bat">刪除</button>
-											</div>
-										</form>
-									</div>
-								</div>
-							</div>
+<div class="dorpdown">
+<div class="btn-group col-md-offset-11">
+	<a class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" href="/modgame/{{game.gameID}}">
+		<span class="glyphicon glyphicon-edit"></span>
+	</a>
+	<div class="dropdown-menu">
+		<form action="/mod/{{game.gameID}}" method="POST" role="form">
+		{% csrf_token %} 
+			<div class="form-group">
+			日期 : <input class="form-control short" type="date" name="date" value="{{game.date |date:"Y-m-d"}}">
+			<label for="location">地點：</label>
+			<input class="form-control " type="text" name="location" value="{{game.location}}">
+			<button type="submit" class="btn btn-default btn-xs" name="button" value="mod_bat">修改</button>
+			<button type="submit" class="btn btn-default btn-xs" name="button" value="del_bat">刪除</button>
+			</div>
+		</form>
+	</div>
+</div>
+</div>
 						{% endif %}
 					</tr>
 					{% endfor %}
