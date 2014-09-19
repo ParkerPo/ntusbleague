@@ -221,7 +221,7 @@ def team(request , team_id) :
 		if( len(game_result) == 0 ):
 			result = '和'
 			team_info.tie += 1
-		elif( game_result[0].teamID == team_id ):
+		elif( game_result[0].teamID == int(team_id) ):
 			result = '勝'
 			team_info.win += 1
 		else:
@@ -499,8 +499,10 @@ def game(request , game_id) :
 
 	for pitcher in away_pit:
 		pitcher.calculate_IP()
+		pitcher.convert_wl()
 	for pitcher in home_pit:
 		pitcher.calculate_IP()
+		pitcher.convert_wl()
 
 	context = {'game': g, 'away_scores': away_scores, 'home_scores': home_scores, 'home_bat' : home_bat, 'home_pit' : home_pit , 'away_bat' : away_bat , 'away_pit' : away_pit, 'away_R': away_R, 'away_H': away_H, 'away_E': away_E, 'home_R': home_R, 'home_H': home_H, 'home_E': home_E}
 
@@ -704,7 +706,7 @@ def addgame(request):
 				fo = int (request.POST.get("pfo_"+team+"_"+str(i),""))
 				go = int (request.POST.get("pgo_"+team+"_"+str(i),""))
 				wl = request.POST.get("wl_"+team+"_"+str(i))
-				
+				print "wl = " + wl
 				if wl== 'win':
 					win=1
 					lose=0

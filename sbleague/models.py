@@ -98,10 +98,17 @@ class Pitching(models.Model):
 	fo = models.IntegerField()
 	win = models.IntegerField()
 	lose = models.IntegerField()
+	wl = ''
 	IP = ''
 
 	def __unicode__(self):
 		return self.member.name + ' ' + str(self.game.date) + ' ' + self.game.home.name + 'vs' + self.game.away.name
+
+	def convert_wl(self):
+		if( self.win == 1 ):
+			self.wl = "勝"
+		elif( self.lose == 1 ):
+			self.wl = "敗"
 
 	def calculate_IP(self):
 		if( self.outs == 0 ):
