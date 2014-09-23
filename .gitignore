@@ -1,3 +1,3 @@
 *.pyc
 venv
-*.sqlite33
+*.sqlite3
