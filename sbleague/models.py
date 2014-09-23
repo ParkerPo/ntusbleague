@@ -23,6 +23,7 @@ class Member(models.Model):
 	memberID = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=50)
 	studentID = models.CharField(max_length=9)
+	number = models.IntegerField(default=0)
 	team = models.ForeignKey(Team)
 	
 	def __unicode__(self):
