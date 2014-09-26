@@ -1,6 +1,6 @@
 ntusbleague
 ===========
-
+ 
 Format of record:
 -----------
 (以下所有代號皆不分大小寫)
