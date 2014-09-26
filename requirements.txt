@@ -1,3 +1,5 @@
 django
-gunicorn
 psycopg2
+gunicorn
+dj-database-url
+dj-static
