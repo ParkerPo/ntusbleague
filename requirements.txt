@@ -1,4 +1,4 @@
-Django==1.8.dev20140716182127
+Django==1.7
 Pillow==2.5.1
 PyRSS2Gen==1.0.0
 Twisted==12.2.0
