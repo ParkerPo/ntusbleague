@@ -112,7 +112,6 @@ if os.getcwd() == "/app":
 )
   DATABASES['default'] =  dj_database_url.config()
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
