@@ -110,7 +110,7 @@ if os.getcwd() == "/app":
     host=url.hostname,
     port=url.port
 )
-  DATABASES['default'] =  dj_database_url.config()
+ # DATABASES['default'] =  dj_database_url.config()
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
