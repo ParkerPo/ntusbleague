@@ -4,9 +4,10 @@ from django.db import models
 # Create your models here.
 
 
+
+
 class Team(models.Model):
 	teamID 	= models.AutoField(primary_key=True)
-	teama = models.CharField(max_length=10)
 	name 	= models.CharField(max_length=50)
 	LEAGUE_NAME =(
 		(0,"不存在"),
@@ -17,7 +18,6 @@ class Team(models.Model):
 
 	def __unicode__(self):
 		return self.name
-
 
 
 class Member(models.Model):
