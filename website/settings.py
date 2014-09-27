@@ -49,7 +49,7 @@ INSTALLED_APPS = (
                   'django.contrib.sessions',
                   'django.contrib.messages',
                   'django.contrib.staticfiles',
-                  'sbleague'
+                  'sbleague',
                   )
 
 DATE_INPUT_FORMATS = (
@@ -96,21 +96,9 @@ DATABASES = {
   }
 }
 
+
 if os.getcwd() == "/app":
-  import psycopg2
-  import urlparse
-
-  urlparse.uses_netloc.append("postgres")
-  url = urlparse.urlparse(os.environ["DATABASE_URL"])
-
-  conn = psycopg2.connect(
-    database=url.path[1:],
-    user=url.username,
-    password=url.password,
-    host=url.hostname,
-    port=url.port
-)
- # DATABASES['default'] =  dj_database_url.config()
+    DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
