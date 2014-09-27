@@ -6,6 +6,7 @@ from django.db import models
 
 class Team(models.Model):
 	teamID 	= models.AutoField(primary_key=True)
+	teama = models.CharField(max_length=10)
 	name 	= models.CharField(max_length=50)
 	LEAGUE_NAME =(
 		(0,"不存在"),
