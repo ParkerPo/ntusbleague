@@ -6,7 +6,7 @@
     
     For the full list of settings and their values, see
     https://docs.djangoproject.com/en/dev/ref/settings/
-    """
+"""
 # Parse database configuration from $DATABASE_URL
 #import dj_database_url
 
@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'website.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-import dj_database_url
+#import dj_database_url
 
 DATABASES = {
     'default': {
