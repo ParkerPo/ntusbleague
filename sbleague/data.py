@@ -49,6 +49,8 @@ class Hitter :
 			self.obp = (self.hit + self.bb) /self.pa 
 		self.ops = self.obp + self.slg 
 
+	
+	def num2str(self):
 		# map to fix-decimal string
 		self.avg = format(self.avg, '.3f')
 		self.slg = format(self.slg, '.3f')
@@ -102,6 +104,9 @@ class Pitcher :
 			self.whip=99
 			self.bb_inning=99
 
+    
+	def num2str(self):
+		
 		# map to fix-decimal string
 		self.era 		= format(self.era, '.3f')
 		self.whip 		= format(self.whip, '.3f')
