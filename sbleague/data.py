@@ -94,9 +94,13 @@ class Pitcher :
 	def stat(self):
 		self.inning = 0.1*(self.outs%3) + math.floor(self.outs / 3)
 		if self.inning !=0 :
-			self.era = (self.er / (self.outs /3)) * 5 
+			self.era = (self.er / (self.outs /3)) * 7 
 			self.whip = (self.h + self.bb) / (self.outs/3)
 			self.bb_inning = self.bb / (self.outs / 3)
+		else :
+			self.era=99
+			self.whip=99
+			self.bb_inning=99
 
 		# map to fix-decimal string
 		self.era 		= format(self.era, '.3f')

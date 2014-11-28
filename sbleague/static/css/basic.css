@@ -78,3 +78,16 @@ table{
 	width : 110px;
 }
 
+.preview{
+    padding: 10px;
+    border-style: double;
+    border-width: 3px;
+}
+.row-center{
+    text-align: center !important;
+}
+.col-center{
+    display: inline-block;
+    float: none;
+
+}

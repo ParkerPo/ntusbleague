@@ -130,7 +130,7 @@
 							<td class="form-td">全壘打</td>
 							<td class="form-td">打點</td>
 							<td class="form-td">得分</td>
-							<td class="form-td">保送</td>
+							<td class="form-td">保送</td>	
 							<td class="form-td">三振</td>
 							<td class="form-td">犧牲打</td>
 						</tr>
@@ -142,7 +142,7 @@
 								<select class="td-input" name="id_{{awayteam.teamID}}_{{forloop.counter}}">
 								<option value = 0> -- </option>
 									{% for member in awayplayer%}
-										<option value="{{member.memberID}}">{{member.name}}</option>
+										<option value="{{member.memberID}}">({{member.number}}){{member.name}}</option>
 									{% endfor %}
 								</select>
 							</td>
@@ -190,7 +190,7 @@
 								<select class="td-input" name="id_{{hometeam.teamID}}_{{forloop.counter}}">
 								<option value = 0> -- </option>
 									{% for member in homeplayer%}
-										<option value="{{member.memberID}}">{{member.name}}</option>
+										<option value="{{member.memberID}}">({{member.number}}){{member.name}}</option>
 									{% endfor %}
 								</select>
 							</td>
@@ -244,7 +244,7 @@
 								<select class="td-input" name="pid_{{awayteam.teamID}}_{{forloop.counter}}">
 									<option value = 0> -- </option>
 									{% for member in awayplayer%}
-										<option value="{{member.memberID}}">{{member.name}}</option>
+										<option value="{{member.memberID}}">({{member.number}}){{member.name}}</option>
 									{% endfor %}
 								</select>
 							</td>
@@ -296,7 +296,7 @@
 								<select class="td-input" name="pid_{{hometeam.teamID}}_{{forloop.counter}}">
 									<option value = 0> -- </option>
 									{% for member in homeplayer%}
-										<option value="{{member.memberID}}">{{member.name}}</option>
+										<option value="{{member.memberID}}">({{member.number}}){{member.name}}</option>
 									{% endfor %}
 								</select>
 							</td>

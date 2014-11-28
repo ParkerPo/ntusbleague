@@ -6,6 +6,17 @@ import argparse
 from player import Game, Team, rdBatter, rdPitcher, PA
 from dump_record import make_PTT_format, make_database_format, make_web_table
 
+def text_to_table(text):
+    
+    table = []
+    lines = text.split('\n')
+    for line in lines:
+        data = line.split()
+        data = filter(None, data)
+        if len(data) != 0:
+            table.append(data)
+    
+    return table
 
 def check_least_out(pa):
     out = 0
@@ -18,6 +29,7 @@ def check_least_out(pa):
     return out
 
 def parse_base(pa, str):
+    
     err = ""
     n = len(str)
     rbi   = 0
@@ -40,7 +52,6 @@ def parse_base(pa, str):
             err = "Unknown base notation %s (%s)" %(s, pa.raw_str)
             break
 
-
     pa.rbi = rbi
     pa.run = run
     pa.out = out
@@ -61,10 +72,10 @@ def change_batter(pa_strs):
         return False
         
 
-def parse_PA(team, order_table, order, turn, inning, curr_order):
-
+def parse_PA(team, order, turn, inning, curr_order):
+    
     err = ""
-    pa_str = order_table[order][turn].upper()
+    pa_str = team.order_table[order][turn].upper()
     s = pa_str.split('/')
     
     pa = PA()
@@ -72,6 +83,7 @@ def parse_PA(team, order_table, order, turn, inning, curr_order):
     pa.raw_str = pa_str
     batter = curr_order[order] # pointer to current batter
     
+
     if( s[0] == 'N' ): # no play
         pa.isPlay = False
 
@@ -119,13 +131,13 @@ def parse_PA(team, order_table, order, turn, inning, curr_order):
            return pa, err
 
 
+
     least_out = check_least_out(pa)
     if( pa.out < least_out ):
         pa.out = least_out
 
     err = batter.AddPA(pa)
-    order_table[order][turn] = [batter, pa]
-
+    team.order_table[order][turn] = [batter, pa]
     return pa, err
 
 
@@ -173,7 +185,7 @@ def parse_column(team):
 
 
 def parse_pitcher_info(team, pitchers):
-
+    
     err = ""
     # parse inning information
     turn     = 0
@@ -207,7 +219,7 @@ def parse_pitcher_info(team, pitchers):
         err = pitcher.AddPa(pa, isER)
         if( err != "" ):
             break
-        
+
         if( pa.endInning == '!'): # end of game
             break
 
@@ -229,7 +241,6 @@ def parse_pitcher_info(team, pitchers):
     
     return err
 
-
 def print_order_table(table):
     for row in table:
         for col in row:
@@ -247,14 +258,14 @@ def print_batter(batters):
 
 
 def parse_order_table(team):
-
+    
     err = ""
     # parse inning information
-    inning   = 1
-    turn     = 0
-    order    = 0
-    out      = 0
-    score    = 0    # score per inning
+    inning      = 1
+    turn        = 0
+    order       = 0
+    out         = 0
+    score       = 0    # score per inning
     nOrder      = len(team.batters)
     curr_order  = []
     for batter in team.batters:
@@ -263,11 +274,11 @@ def parse_order_table(team):
     team_H = 0
     opp_E = 0
     while(True):
-        pa, err = parse_PA(team, team.order_table, order, turn, inning, curr_order)
+        pa, err = parse_PA(team, order, turn, inning, curr_order)
         if( err != "" ):
             err += " - row %d" %(order+1)
             break
-
+        
         score += pa.run
 
         if( pa.result in ("1B", "2B", "3B", "HR") ):
@@ -277,7 +288,8 @@ def parse_order_table(team):
             opp_E += 1
 
         if( pa.endInning in ('#', '!') ):  # change inning
-            team.scores.append(score)
+            team.scores[inning-1] = score
+            inning += 1
             score = 0
 
         if( pa.endInning == '!' ):
@@ -288,20 +300,176 @@ def parse_order_table(team):
             order = 0
             turn += 1
     
-    team.H = team_H
-
-    # append 0 to team score board until 7th inning
-    score_inn = len(team.scores)
-    for i in range(7-score_inn):
-        team.scores.append(0)
-    
+    team.H  = team_H
     parse_column(team)
+    return opp_E, err
 
-    return team, opp_E, err
 
 
-def main():
+def make_team(team_name, scores, str_table):
     
+    err = ""
+    team = Team()
+    team.name = team_name
+
+    if( scores == None ):
+        scores = [0] * 7
+    if( len(scores) < 7 ):
+        scores = scores + [0] * (7 - len(scores))
+
+    team.scores = scores
+
+    for r in range(len(str_table)):
+
+        row = str_table[r]
+        print row
+        if( len(row) < 3 ):
+            err = "format error(row %d): name position PA PA..." %(r+1)
+            break
+
+        order = str(r+1)
+        no    = row[0]
+        pos   = row[1].upper()
+        PAs   = row[2:]
+        team.batters.append( rdBatter(order, no, pos) )
+        team.order_table.append( PAs )
+
+        if( pos == 'P' ):
+            team.pitchers.append( rdPitcher(no) )
+
+    return team, err
+
+
+
+def make_game(game):
+
+    err = ""
+    away = game.away
+    home = game.home
+
+    if( not away.hasRecord() and not home.hasRecord() ):
+        err = "Both record not exist"
+        return game, err
+
+    ## handle 1 team case
+    if( not away.hasRecord() and home.hasRecord() ):
+        away.pitchers.append( rdPitcher('00') )
+    if( away.hasRecord() and not home.hasRecord() ):
+        home.pitchers.append( rdPitcher('00') )
+
+
+    if( away.hasRecord() ):
+        if( len(away.pitchers) == 0 ):
+            err = away.name + u"沒有先發投手"
+            return game, err
+
+        home.E, err = parse_order_table(away)
+        if( err != "" ):
+            err += " in Away Record"
+            return game, err
+
+        err = parse_pitcher_info(away, home.pitchers)  
+        if( err != "" ):
+            err += " in Away Record"
+            return game, err
+        
+
+    if( home.hasRecord() ):
+        if( len(home.pitchers) == 0 ):
+            err = home.name + u"沒有先發投手"
+            return game, err
+
+        away.E, err = parse_order_table(home)
+
+        if( err != "" ):
+            err += " in Home Record"
+            return game, err
+
+        err = parse_pitcher_info(home, away.pitchers)  
+        if( err != "" ):
+            err += " in Home Record"
+            return game, err
+
+        
+    # calculate total scores
+    away.compute_statistic()
+    home.compute_statistic()
+
+    game.away = away
+    game.home = home
+
+    return game, err
+
+
+
+
+
+def load_record_file(recordFileName):
+
+    away_scores = []
+    away_table  = []
+    home_scores = []
+    home_table  = []
+    with open(recordFileName) as f:
+        print "Load " + recordFileName
+        for line in f:
+            data = list(line.split())
+            if len(data) != 0:
+                if( data[0].upper() == 'AWAY' ):
+                    away_team_name = data[1]
+                    scores = away_scores
+                    table  = away_table
+                elif( data[0].upper() == 'HOME' ):
+                    home_team_name = data[1]
+                    scores = home_scores
+                    table  = home_table
+                elif( data[0].upper() == 'BOX' ):
+                    for s in data[1:]:
+                        scores.append(int(s))
+                else:
+                    table.append(data)
+
+    return away_team_name, away_scores, away_table, home_team_name, home_scores, home_table
+
+## main calling function
+def parse_game_record(away_team_name, away_scores, away_table, home_team_name, home_scores, home_table):
+    
+    err = ""
+    game = Game()
+    print away_table 
+    game.away, err = make_team(away_team_name, away_scores, away_table)
+    if( err != "" ):
+        err += " in Away record"
+        return game, err
+
+    game.home , err = make_team(home_team_name, home_scores, home_table)
+    if( err != "" ):
+        err += " in Home record"
+        return game, err
+
+    game, err = make_game(game)
+    
+    if( err != "" ):
+        return game, err
+
+    if( game.away.hasRecord() ):
+        game.away.compute_statistic()
+        make_web_table(game.away)
+    if( game.home.hasRecord() ):
+        game.home.compute_statistic()
+        make_web_table(game.home)
+
+    isColor = True
+    post_ptt = make_PTT_format(game, isColor)
+    post_ptt = post_ptt.replace('\x1b', '\025')
+    game.post_ptt = post_ptt
+    #post_db  = make_database_format(game)
+
+    return game, err
+    
+
+if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-i" , dest="input_file_name" , required=True, help="Specify input file name")
     parser.add_argument("-o" , dest="output_file_name", help="Specify output file name [default: print to screen]")
@@ -313,9 +481,12 @@ def main():
     outputFileName = opts.output_file_name
     isColor = not opts.no_color
 
-    raw_data = load_data_from_file(recordFileName)
-    game = parse_game_data(raw_data)
+    away_team_name, away_scores, away_record, \
+    home_team_name, home_scores, home_record = load_record_file(recordFileName)
 
+    game, err = parse_game_record(away_team_name, away_scores, away_record, \
+                                  home_team_name, home_scores, home_record)
+    """
     if( game.team2 == None ):
         isOneTeam = True
     else:
@@ -336,114 +507,4 @@ def main():
         with open(outputFileName + '.db', 'w') as f:
             print "Dump %s" %(outputFileName + '.db')
             f.write(post_db)
-    
-
-if __name__ == "__main__":
-    main()
-
-
-def make_team(team_name, str_table):
-
-    team = Team()
-    team.name = team_name
-
-    for r in range(len(str_table)):
-
-        row = str_table[r]
-
-        order = str(r+1)
-        no    = row[0]
-        pos   = row[1].upper()
-        PAs   = row[2:]
-        team.batters.append( rdBatter(order, no, pos) )
-        team.order_table.append( PAs )
-
-        if( pos == 'P' ):
-            team.pitchers.append( rdPitcher(no) )
-
-    return team
-
-
-
-def make_game(away_team_name, away_str_table, home_team_name, home_str_table):
-
-    game = Game()
-    err = ""
-
-    away = make_team(away_team_name, away_str_table)
-    home = make_team(home_team_name, home_str_table)
-
-    if( len(away.pitchers) == 0 ):
-        err = away.name + "沒有先發投手"
-        return game, err
-
-    if( len(home.pitchers) == 0 ):
-        err = home.name + "沒有先發投手"
-        return game, err
-
-    away, home.E, err = parse_order_table(away)
-    if( err != "" ):
-        err += " in Away Record"
-        return game, err
-
-    home, away.E, err = parse_order_table(home)
-    if( err != "" ):
-        err += " in Home Record"
-        return game, err
-        
-    err = parse_pitcher_info(away, home.pitchers)  
-    if( err != "" ):
-        err += " in Away Record"
-        return game, err
-        
-    err = parse_pitcher_info(home, away.pitchers)  
-    if( err != "" ):
-        err += " in Home Record"
-        return game, err
-        
-    # calculate total scores
-    away.compute_statistic()
-    home.compute_statistic()
-
-    game.away = away
-    game.home = home
-
-    return game, err
-
-def seperate_web_string(string_data):
-    
-    str_table = []
-    lines = string_data.split('\n')
-    for line in lines:
-        data = line.split()
-        data = filter(None, data)
-        if len(data) != 0:
-            str_table.append(data)
-    
-    return str_table
-
-
-# ===== main function =====
-def parse_record_from_web(away_team_name, away_string, home_team_name, home_string):
-    
-    away_str_table = seperate_web_string(away_string)
-    home_str_table = seperate_web_string(home_string)
-
-    game, err = make_game(away_team_name, away_str_table, home_team_name, home_str_table)
-    
-    if( err != "" ):
-        return None, err
-
-    game.away.compute_statistic()
-    game.home.compute_statistic()
-
-    make_web_table(game.away)
-    make_web_table(game.home)
-
-    isColor = True
-    post_ptt = make_PTT_format(game, isColor)
-    post_ptt = post_ptt.replace('\x1b', '\025')
-    game.post_ptt = post_ptt
-    #post_db  = make_database_format(game)
-
-    return game, err
+    """

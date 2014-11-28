@@ -8,7 +8,7 @@ from data import Hitter, Pitcher, TeamStat, GameStat, League
 from operator import attrgetter
 from django.contrib.auth import authenticate, login as log_account , logout as out_account
 from django.contrib.auth.models import User
-from parse_record import parse_record_from_web
+from parse_record import parse_game_record, text_to_table
 from player import rdBatter, rdPitcher
 from django.http import HttpResponse
 import mimetypes, os
@@ -67,41 +67,53 @@ def index(request) :
 		for team in team_list:
 			team.GB = ( (top.win - team.win) + (team.lose -  top.lose) ) / 2.0
 
+		team_list = sorted(team_list , key=attrgetter('GB','percent'))
 		team_list[0].GB = '-'
 		league.team_list = team_list
-		
+
 
 	players = Member.objects.all()
+	
 	# --- batting ranking
 	thr = 1
-	batting_list = calculate_batting_rank(players, thr)
+	batting_list = calculate_batting_rank(players,thr)
+	batting_list = filter(lambda list : not list.name.startswith("OB"),batting_list)
 
-	batting_list = sorted(batting_list, key=attrgetter('avg'), reverse=True)
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.pa),int(x.pa)))
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(float(y.avg),float(x.avg)))
 	avg_list = batting_list[0:5]
 
-	batting_list = sorted(batting_list, key=attrgetter('hit'), reverse=True)
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(float(y.avg),float(x.avg)))
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
 
-	batting_list = sorted(batting_list, key=attrgetter('hr'), reverse=True)
+	bbatting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
 	hr_list = batting_list[0:5]
 
-	batting_list = sorted(batting_list, key=attrgetter('rbi'), reverse=True)
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.rbi),int(x.rbi)))
 	rbi_list = batting_list[0:5]
 
 	# --- pitching ranking
 	thr = 1
-	pitching_list = calculate_pitching_rank(players, thr)
+	pitching_list = calculate_pitching_rank(players,thr)
+	pitching_list = filter(lambda list : not list.name.startswith("OB"),pitching_list)
 
-	pitching_list = sorted(pitching_list, key=attrgetter('era'))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.outs),float(x.outs)))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
 	era_list = pitching_list[0:5]
 
-	pitching_list = sorted(pitching_list, key=attrgetter('win'), reverse=True)
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.win),float(x.win)))
 	win_list = pitching_list[0:5]
 
-	pitching_list = sorted(pitching_list, key=attrgetter('so'), reverse=True)
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(x.outs),float(y.outs)))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.so),float(x.so)))
 	so_list = pitching_list[0:5]
 
-	pitching_list = sorted(pitching_list, key=attrgetter('whip'))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.whip),float(y.whip)))
+	
 	whip_list = pitching_list[0:5]
 	
 
@@ -109,11 +121,19 @@ def index(request) :
 	
 	return render (request, 'sbleague/index.html', context)
 
-def calculate_batting_rank(players, thr=0):
+def calculate_batting_rank(players,thr=0):
 	
 	player_map = {}
 	batting_all = Batting.objects.filter(pa__gte=thr)
-	
+
+	teams=Team.objects.all()
+	team_gamecount=[]
+	for team in teams:
+		home=Game.objects.filter(home=team).count()
+		away=Game.objects.filter(away=team).count()
+		count=home+away
+		team_gamecount.append([team,count])
+
 	for batting in batting_all:
 		id = batting.member.memberID
 		if( not player_map.has_key(id) ):
@@ -122,6 +142,7 @@ def calculate_batting_rank(players, thr=0):
 			h.memberID 	= batting.member.memberID
 			h.team 		= batting.team
 			player_map[id] = h
+			player_map[id].id = id
 
 		player_map[id].pa 			+= batting.pa
 		player_map[id].single 		+= batting.single
@@ -136,16 +157,33 @@ def calculate_batting_rank(players, thr=0):
 		player_map[id].games_played += 1
 
 	for player in player_map.values():
-		player.stat()
+		if len(team_gamecount)!=0 :
+			for team in team_gamecount:
+				if team[0] == player.team:
+					if team[1]*2 <= player.pa:
+						player.stat()
+					else:
+						del player_map[player.id]
+		else :
+			player.stat()
 
 	batting_list = player_map.values()
+	
 	return batting_list
 
-def calculate_pitching_rank(players, thr=0):
+def calculate_pitching_rank(players,thr=0):
 	
 	player_map = {}
 	pitching_all = Pitching.objects.filter(pa__gte=thr)
 	
+	teams=Team.objects.all()
+	team_gamecount=[]
+	for team in teams:
+		home=Game.objects.filter(home=team).count()
+		away=Game.objects.filter(away=team).count()
+		count=home+away
+		team_gamecount.append([team,count])
+
 	for pitching in pitching_all:
 		id = pitching.member.memberID
 		if( not player_map.has_key(id) ):
@@ -154,6 +192,7 @@ def calculate_pitching_rank(players, thr=0):
 			h.memberID 	= pitching.member.memberID
 			h.team 		= pitching.team
 			player_map[id] = h
+			player_map[id].id = id
 
 		player_map[id].pa 			+= pitching.pa
 		player_map[id].win 			+= pitching.win
@@ -170,7 +209,17 @@ def calculate_pitching_rank(players, thr=0):
 		player_map[id].games_played += 1
 
 	for player in player_map.values():
-		player.stat()
+		if len(team_gamecount)!=0 :
+			for team in team_gamecount:
+				if team[0] == player.team:
+					if team[1]*6 <= player.outs:
+						#print"-", player.name , team[1]*9 , player.outs
+						player.stat()
+					else:
+						del player_map[player.id]
+
+		else:
+			player.stat()
 
 	pitching_list = player_map.values()
 	return pitching_list
@@ -365,7 +414,7 @@ def people(request , member_id) :
 	player = Member.objects.get(memberID = member_id)
 
 	# --- batting
-	game_all 	= Batting.objects.filter(member__memberID = member_id)
+	game_all 	= Batting.objects.filter(member__memberID = member_id).order_by("game")
 	hitting_list = []
 	hitting_sum  = Hitter()
 	
@@ -411,7 +460,7 @@ def people(request , member_id) :
 			hitting_list.append(hitter)
 
 	# --- pitching
-	game_all  	  = Pitching.objects.filter(member__memberID = member_id)
+	game_all  	  = Pitching.objects.filter(member__memberID = member_id).order_by("game")
 	pitching_list = []
 	pitching_sum  = Pitcher()
 	
@@ -526,8 +575,8 @@ def newgame(request):
 		hometeam = Team.objects.get(pk=home_teamID)
 		awayteam = Team.objects.get(pk=away_teamID)
 
-		homeplayer = Member.objects.filter(team = home_teamID)
-		awayplayer = Member.objects.filter(team = away_teamID)
+		homeplayer = Member.objects.filter(team = home_teamID).order_by("number")
+		awayplayer = Member.objects.filter(team = away_teamID).order_by("number")
 
 		date = request.POST.get("date", "")
 		location = request.POST.get("location", "")		
@@ -545,7 +594,16 @@ def newgame(request):
 		if( len(away_record) and len(home_record) ):
 			awayteam_name = awayteam.name.encode('utf8')[0:6]
 			hometeam_name = hometeam.name.encode('utf8')[0:6]
-			record, record_err = parse_record_from_web(awayteam_name, away_record.encode('utf8'), hometeam_name, home_record.encode('utf8'))
+			away_table = text_to_table(away_record.encode('utf8'))
+			home_table = text_to_table(home_record.encode('utf8'))
+			record, record_err = parse_game_record(awayteam_name, None, away_table, hometeam_name, None, home_table)
+			
+			record.game_type    = "台大慢壘聯盟"
+			record.date         = date
+			record.location     = location
+			record.game_id      = game_id
+			record.away.raw_record = away_record.encode('utf8')
+			record.home.raw_record = home_record.encode('utf8')
 		else:
 			if( len(away_record) == 0 ):
 				record_err = "Away 沒有記錄"
@@ -706,7 +764,6 @@ def addgame(request):
 				fo = int (request.POST.get("pfo_"+team+"_"+str(i),""))
 				go = int (request.POST.get("pgo_"+team+"_"+str(i),""))
 				wl = request.POST.get("wl_"+team+"_"+str(i))
-				print "wl = " + wl
 				if wl== 'win':
 					win=1
 					lose=0
@@ -765,6 +822,14 @@ def mod(request,game_id):
 			game.home_H = request.POST.get("home_H","")
 			game.home_E = request.POST.get("home_E","")
 			game.save()
+#		elif button == "mod_bat" :
+
+		elif button == "del_bat" :
+			team = request.POST.get("team","")
+			sequence = request.POST.get("sequence","")
+
+			bat_rec = Batting.objects.filter(Q(game=game) , Q(team=team) , Q(sequence = sequence))
+			bat_rec[0].delete()
 
 
 		return redirect("/game/"+str(game_id))

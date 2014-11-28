@@ -2,22 +2,26 @@
 # -*- coding: utf8 -*-
 import sys, os
 
+def exist_cjk(string):
+    return any( 0x4e00 <= ord(x) <= 0x9fff for x in string)
 
 def make_PTT_format(game, isAddColor=True):
     
     posts = ""
     posts += make_PTT_score_board(game)
     posts += "\n"
-    posts += game.away.name + "\n"
-    posts += make_team_PTTtable(game.away, isAddColor)
-    posts += "\n\n"
-    posts += make_pitcher_PTTtable(game.away.pitchers)
-    posts += "--------------------------------------------------------------------------------\n\n"
-    posts += game.home.name + "\n"
-    posts += make_team_PTTtable(game.home, isAddColor)
-    posts += "\n\n"
-    posts += make_pitcher_PTTtable(game.home.pitchers)
-    posts += '\n'
+    if( game.away.hasRecord() ):
+        posts += game.away.name + "\n"
+        posts += make_team_PTTtable(game.away, isAddColor)
+        posts += "\n\n"
+        posts += make_pitcher_PTTtable(game.away.pitchers)
+        posts += "\n"
+    if( game.home.hasRecord() ):
+        posts += game.home.name + "\n"
+        posts += make_team_PTTtable(game.home, isAddColor)
+        posts += "\n\n"
+        posts += make_pitcher_PTTtable(game.home.pitchers)
+        posts += '\n'
 
     return posts
 
@@ -51,9 +55,9 @@ def make_PTT_score_board(game):
     vv = "│"
     vh = "┼"
     posts  = "      %s１%s２%s３%s４%s５%s６%s７%s　%sＲ%sＨ%sＥ\n" %(vv, vv, vv, vv, vv, vv, vv, vv, vv, vv, vv)
-
     for team in [game.away, game.home]:
         posts += "%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n" %(hh, hh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh, vh, hh)
+        
         posts += " %s %s%2d%s%2d%s%2d%s%2d%s%2d%s%2d%s%2d%s　%s%2d%s%2d%s%2d\n" %(team.name, vv, team.scores[0], vv, team.scores[1], vv, team.scores[2], vv, team.scores[3], vv, team.scores[4], vv, team.scores[5], vv, team.scores[6], vv, vv, team.R, vv, team.H, vv, team.E)
     
     return posts
@@ -76,8 +80,10 @@ def make_batter_table(team):
     table = []
 
     # --- inning title
-    row = [""] * 11
     offset = 2
+    max_width = offset + len(col2inn)
+    row = [""] * max_width
+
     row[offset] = (digit2FullWidth(1) + "局")
     for n in range(1, len(col2inn)):
         if( col2inn[n] != col2inn[n-1] ):
@@ -86,7 +92,7 @@ def make_batter_table(team):
     table.append(row)
 
     for n in range(len(player)):
-        row = [""] * 11
+        row = [""] * max_width
         
         if( player[n].order == 'R' ):
             order = "代"
@@ -171,7 +177,7 @@ def make_team_PTTtable(team, isAddColor=True):
         else:
             num = player[n].number
 
-        space = " " * (6 - big5len(num) ) 
+        space = " " * (4 - big5len(num) ) 
         posts += "%s%s%3s  " %(num, space, player[n].pos)
 
         column = 0
