@@ -91,3 +91,20 @@ table{
     float: none;
 
 }
+
+.footer{
+    bottom: 0;
+    width: 100%;
+    height: 400px;
+    background-color: #CCCCCC;
+}
+
+.footer > .container {
+    padding: 50px 30px 30px;
+}
+
+.footer > .container > .row > .fb-box {
+    height: 300px;
+    width: 400px;
+    background-color: #FFFFFF !important;
+}
