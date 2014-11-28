@@ -30,6 +30,10 @@ class Hitter :
 		self.slg=0
 		self.obp=0
 		self.ops=0
+		self.avg_s=''
+		self.slg_s=''
+		self.obp_s=''
+		self.ops_s=''
 		self.name 	= ''
 		self.date 	= ''
 		self.opp 	= ''
@@ -49,13 +53,11 @@ class Hitter :
 			self.obp = (self.hit + self.bb) /self.pa 
 		self.ops = self.obp + self.slg 
 
-	
-	def num2str(self):
 		# map to fix-decimal string
-		self.avg = format(self.avg, '.3f')
-		self.slg = format(self.slg, '.3f')
-		self.obp = format(self.obp, '.3f')
-		self.ops = format(self.ops, '.3f')
+		self.avg_s = format(self.avg, '.3f')
+		self.slg_s = format(self.slg, '.3f')
+		self.obp_s = format(self.obp, '.3f')
+		self.ops_s = format(self.ops, '.3f')
 
 	def add(self, hitter):
 		self.pa += hitter.pa
@@ -88,10 +90,12 @@ class Pitcher :
 		self.er=0
 		self.go=0
 		self.fo=0
-		#self.avg=0
 		self.era=0
 		self.whip=0
 		self.bb_inning = 0
+		self.era_s=''
+		self.whip_s=''
+		self.bb_inning_s = ''
 
 	def stat(self):
 		self.inning = 0.1*(self.outs%3) + math.floor(self.outs / 3)
@@ -104,13 +108,10 @@ class Pitcher :
 			self.whip=99
 			self.bb_inning=99
 
-    
-	def num2str(self):
-		
 		# map to fix-decimal string
-		self.era 		= format(self.era, '.3f')
-		self.whip 		= format(self.whip, '.3f')
-		self.bb_inning 	= format(self.bb_inning, '.3f')
+		self.era_s 		 = format(self.era, '.3f')
+		self.whip_s 	 = format(self.whip, '.3f')
+		self.bb_inning_s = format(self.bb_inning, '.3f')
 
 	def add(self , pit):
 		self.win+=pit.win

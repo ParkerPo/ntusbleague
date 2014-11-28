@@ -82,25 +82,17 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.pa),int(x.pa)))
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(float(y.avg),float(x.avg)))
 	avg_list = batting_list[0:5]
-	for player in avg_list:
-		player.num2str()
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(float(y.avg),float(x.avg)))
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
-	for player in hit_list:
-		player.num2str()
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
 	hr_list = batting_list[0:5]
-	for player in hr_list:
-		player.num2str()
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.rbi),int(x.rbi)))
 	rbi_list = batting_list[0:5]
-	for player in rbi_list:
-		player.num2str()
 
 	# --- pitching ranking
 	thr = 1
@@ -110,26 +102,18 @@ def index(request) :
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.outs),float(x.outs)))
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
 	era_list = pitching_list[0:5]
-	for player in era_list:
-		player.num2str()
 
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.win),float(x.win)))
 	win_list = pitching_list[0:5]
-	for player in win_list:
-		player.num2str()
 
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(x.outs),float(y.outs)))
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.so),float(x.so)))
 	so_list = pitching_list[0:5]
-	for player in so_list:
-		player.num2str()
 
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.whip),float(y.whip)))
 	whip_list = pitching_list[0:5]
-	for player in whip_list:
-		player.num2str()
 	
 
 	context = {'league_list' : league_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list, 'rbi_list': rbi_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list}
@@ -247,9 +231,6 @@ def allbatting(request, order="avg"):
 	batting_list = calculate_batting_rank(players)
 	batting_list = sorted(batting_list, key=attrgetter(order), reverse=True)
 
-	for player in batting_list:
-		player.num2str()
-
 	context = {'batting_list': batting_list}
 	return render(request , 'sbleague/allbatting.html',context)
 
@@ -266,9 +247,6 @@ def allpitching(request, order="win"):
 	players = Member.objects.all()
 	pitching_list = calculate_pitching_rank(players)
 	pitching_list = sorted(pitching_list, key=attrgetter(order), reverse=rev)
-	
-	for player in pitching_list:
-		player.num2str()
 
 	context = {'pitching_list': pitching_list}
 	return render(request , 'sbleague/allpitching.html',context)
