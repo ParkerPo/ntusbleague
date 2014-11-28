@@ -20,10 +20,11 @@
 			<thead>
 				<tr>
 					<th>名字</th>
+					<th>球隊</th>
 					<th><a href="/batting/games_played"	>出賽</a></th>
 					<th><a href="/batting/pa"			>打席</a></th>
 					<th><a href="/batting/ab"			>打數</a></th>
-					<th><a href="/batting/h"			>安打</a></th>
+					<th><a href="/batting/hit"			>安打</a></th>
 					<th><a href="/batting/single"		>一安</a></th>
 					<th><a href="/batting/double"		>二安</a></th>
 					<th><a href="/batting/triple"		>三安</a></th>
@@ -43,6 +44,7 @@
 			{% for player in batting_list %}
 				<tr>
 					<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+                    <td><a href="/team/{{player.teamID}}">{{player.team}}</a></td>
 					<td>{{player.games_played}}</td>
 					<td>{{player.pa}}</td>
 					<td>{{player.ab}}</td>

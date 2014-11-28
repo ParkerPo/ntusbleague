@@ -156,6 +156,7 @@ def calculate_batting_rank(players,thr=0):
 			h.name 		= batting.member.name
 			h.memberID 	= batting.member.memberID
 			h.team 		= batting.team
+			h.teamID	= batting.team.teamID
 			player_map[id] = h
 			player_map[id].id = id
 
@@ -206,6 +207,7 @@ def calculate_pitching_rank(players,thr=0):
 			h.name 		= pitching.member.name
 			h.memberID 	= pitching.member.memberID
 			h.team 		= pitching.team
+			h.teamID	= pitching.team.teamID
 			player_map[id] = h
 			player_map[id].id = id
 
@@ -240,8 +242,8 @@ def calculate_pitching_rank(players,thr=0):
 	return pitching_list
 
 def allbatting(request, order="avg"):
-
-	players = Member.objects.all()
+	
+	players = Member.objects.all() 
 	batting_list = calculate_batting_rank(players)
 	batting_list = sorted(batting_list, key=attrgetter(order), reverse=True)
 

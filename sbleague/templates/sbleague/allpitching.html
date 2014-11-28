@@ -20,6 +20,7 @@
 			<thead>
 				<tr>
 					<th>名字</th>
+					<th>球隊</th>
 					<th><a href="/pitching/games_played">出賽</th>
 					<th><a href="/pitching/win"			>勝投</th>
 					<th><a href="/pitching/lose"		>敗投</th>
@@ -41,7 +42,8 @@
 			<tbody>
 			{% for player in pitching_list %}
 				<tr>
-					<td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+                    <td><a href="/people/{{player.memberID}}">{{player.name}}</a></td>
+                    <td><a href="/team/{{player.teamID}}">{{player.team}}</a></td>
 					<td>{{player.games_played}}</td>
 					<td>{{player.win}}</td>
 					<td>{{player.lose}}</td>
