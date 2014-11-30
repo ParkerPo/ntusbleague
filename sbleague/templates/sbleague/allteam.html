@@ -20,7 +20,7 @@
 				<tr>
 					<th colspan="17" class="table-title">團隊打擊成績</th>
 				</tr>
-				<tr>
+				<tr class="info">
 					<th>名字</th>
 					<th>打席</th>
 					<th>打數</th>
@@ -56,13 +56,13 @@
 						<td>{{team_bat.bb}}</td>
 						<td>{{team_bat.so}}</td>
 						<td>{{team_bat.sf}}</td>
-						<td>{{team_bat.avg}}</td>
-						<td>{{team_bat.obp}}</td>
-						<td>{{team_bat.slg}}</td>
-						<td>{{team_bat.ops}}</td>
+						<td>{{team_bat.avg_s}}</td>
+						<td>{{team_bat.obp_s}}</td>
+						<td>{{team_bat.slg_s}}</td>
+						<td>{{team_bat.ops_s}}</td>
 					</tr>
 				{% endfor %}
-					<tr class="danger">
+					<tr class="success">
 						<td>聯盟</td>
 						<td>{{league_bat.pa}}</td>
 						<td>{{league_bat.ab}}</td>
@@ -76,10 +76,10 @@
 						<td>{{league_bat.bb}}</td>
 						<td>{{league_bat.so}}</td>
 						<td>{{league_bat.sf}}</td>
-						<td>{{league_bat.avg}}</td>
-						<td>{{league_bat.obp}}</td>
-						<td>{{league_bat.slg}}</td>
-						<td>{{league_bat.ops}}</td>
+						<td>{{league_bat.avg_s}}</td>
+						<td>{{league_bat.obp_s}}</td>
+						<td>{{league_bat.slg_s}}</td>
+						<td>{{league_bat.ops_s}}</td>
 					</tr>
 			</tbody>
 		</table>
@@ -89,7 +89,7 @@
 				<tr>
 					<th colspan="17" class="table-title">團隊投球成績</th>
 				</tr>
-				<tr>
+				<tr class="info">
 					<th>隊名</th>
 					<th>打席</th>
 					<th>局數</th>
@@ -120,12 +120,12 @@
 					<td>{{team_pit.er}}</td>
 					<td>{{team_pit.go}}</td>
 					<td>{{team_pit.fo}}</td>
-					<td>{{team_pit.bb_inning}}</td>
-					<td>{{team_pit.era}}</td>
-					<td>{{team_pit.whip}}</td>
+					<td>{{team_pit.bb_inning_s}}</td>
+					<td>{{team_pit.era_s}}</td>
+					<td>{{team_pit.whip_s}}</td>
 				</tr>
 				{% endfor %}
-				<tr class="danger">
+				<tr class="success">
 					<td>聯盟</td>
 					<td>{{league_pit.pa}}</td>
 					<td>{{league_pit.inning}}</td>
@@ -137,9 +137,9 @@
 					<td>{{league_pit.er}}</td>
 					<td>{{league_pit.go}}</td>
 					<td>{{league_pit.fo}}</td>
-					<td>{{league_pit.bb_inning}}</td>
-					<td>{{league_pit.era}}</td>
-					<td>{{league_pit.whip}}</td>
+					<td>{{league_pit.bb_inning_s}}</td>
+					<td>{{league_pit.era_s}}</td>
+					<td>{{league_pit.whip_s}}</td>
 				</tr>
 			</tbody>
 		</table>

@@ -109,14 +109,14 @@
 					<td>{{bat.bb}}</td>
 					<td>{{bat.so}}</td>
 					<td>{{bat.sf}}</td>
-					<td>{{bat.avg}}</td>
-					<td>{{bat.obp}}</td>
-					<td>{{bat.slg}}</td>
-					<td>{{bat.ops}}</td>
+					<td>{{bat.avg_s}}</td>
+					<td>{{bat.obp_s}}</td>
+					<td>{{bat.slg_s}}</td>
+					<td>{{bat.ops_s}}</td>
 						
 				</tr>
 			{% endfor %}
-				<tr class="danger">
+				<tr class="success">
 					<td>總計</td>
 					<td>--</td>
 					<td>{{team_bat.pa}}</td>
@@ -131,10 +131,10 @@
 					<td>{{team_bat.bb}}</td>
 					<td>{{team_bat.so}}</td>
 					<td>{{team_bat.sf}}</td>
-					<td>{{team_bat.avg}}</td>
-					<td>{{team_bat.obp}}</td>
-					<td>{{team_bat.slg}}</td>
-					<td>{{team_bat.ops}}</td>
+					<td>{{team_bat.avg_s}}</td>
+					<td>{{team_bat.obp_s}}</td>
+					<td>{{team_bat.slg_s}}</td>
+					<td>{{team_bat.ops_s}}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -181,12 +181,12 @@
 					<td>{{pit.er}}</td>
 					<td>{{pit.go}}</td>
 					<td>{{pit.fo}}</td>
-					<td>{{pit.bb_inning}}</td>
-					<td>{{pit.era}}</td>
-					<td>{{pit.whip}}</td>
+					<td>{{pit.bb_inning_s}}</td>
+					<td>{{pit.era_s}}</td>
+					<td>{{pit.whip_s}}</td>
 				</tr>
 			{% endfor %}
-				<tr class="danger">
+				<tr class="success">
 					<td>總計</td>
 					<td>--</td>
 					<td>{{team_pit.win}}</td>
@@ -201,9 +201,9 @@
 					<td>{{team_pit.er}}</td>
 					<td>{{team_pit.go}}</td>
 					<td>{{team_pit.fo}}</td>
-					<td>{{team_pit.bb_inning}}</td>
-					<td>{{team_pit.era}}</td>
-					<td>{{team_pit.whip}}</td>
+					<td>{{team_pit.bb_inning_s}}</td>
+					<td>{{team_pit.era_s}}</td>
+					<td>{{team_pit.whip_s}}</td>
 				</tr>
 			</tbody>
 		</table>

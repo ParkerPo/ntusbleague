@@ -67,7 +67,8 @@ def index(request) :
 		for team in team_list:
 			team.GB = ( (top.win - team.win) + (team.lose -  top.lose) ) / 2.0
 
-		team_list = sorted(team_list , key=attrgetter('GB','percent'))
+		team_list = sorted(team_list , key=attrgetter('percent'), reverse=True)
+		team_list = sorted(team_list , key=attrgetter('GB'))
 		team_list[0].GB = '-'
 		league.team_list = team_list
 
