@@ -488,8 +488,9 @@ def people(request , member_id) :
 			pitching_sum.stat()
 
 			# accumulated statistic
-			pitcher.era 	= pitching_sum.era
-			pitcher.whip 	= pitching_sum.whip
+			pitcher.bb_inning_s 	= pitching_sum.bb_inning_s
+			pitcher.era_s 	= pitching_sum.era_s
+			pitcher.whip_s 	= pitching_sum.whip_s
 			
 			# game information
 			game 			= game_detail.game
