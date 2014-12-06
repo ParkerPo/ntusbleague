@@ -69,6 +69,7 @@ class Hitter :
 		self.r +=hitter.r
 		self.bb +=hitter.bb
 		self.so +=hitter.so
+		self.sf +=hitter.sf
 		self.games_played += hitter.games_played
 
 

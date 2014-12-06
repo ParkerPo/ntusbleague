@@ -74,7 +74,6 @@ def index(request) :
 
 
 	players = Member.objects.all()
-	
 	# --- batting ranking
 	thr = 1
 	batting_list = calculate_batting_rank(players,thr)
@@ -441,10 +440,10 @@ def people(request , member_id) :
 			hitting_sum.stat()
 
 			# accumulated statistic
-			hitter.avg 		= hitting_sum.avg
-			hitter.slg 		= hitting_sum.slg
-			hitter.obp 		= hitting_sum.obp
-			hitter.ops 		= hitting_sum.ops
+			hitter.avg_s	= hitting_sum.avg_s
+			hitter.slg_s	= hitting_sum.slg_s
+			hitter.obp_s	= hitting_sum.obp_s
+			hitter.ops_s	= hitting_sum.ops_s
 			
 			# game information
 			game 			= game_detail.game
