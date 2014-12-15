@@ -253,7 +253,6 @@ def allpitching(request, order="win"):
 
 def team(request , team_id) :
 	thisteam = Team.objects.get(teamID = team_id)
-
 	team_info = TeamStat()
 	team_info.name 	 = thisteam.name
 	team_info.teamID = thisteam.teamID
@@ -290,7 +289,9 @@ def team(request , team_id) :
 		g.scores 	= str(sum(scores[0])) + ' : ' + str(sum(scores[1]))
 		g.result 	= result
 		game_list.append(g)
-
+	
+	# sort by date
+	game_list = sorted(game_list , key=attrgetter('date'))
 	team_info.stat()
 
 	members = Member.objects.filter(team__teamID = team_id)
