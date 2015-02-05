@@ -237,7 +237,6 @@ def allbatting(request, order="avg"):
 
 def allpitching(request, order="win"):
     
-	print order
 	increase_order = ["era", "whip", "bb_inning", "er", "r", "hr", "h", "bb"]
 	if( order in increase_order ):
 		rev = False
