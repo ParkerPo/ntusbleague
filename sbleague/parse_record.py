@@ -322,7 +322,7 @@ def make_team(team_name, scores, str_table):
     for r in range(len(str_table)):
 
         row = str_table[r]
-        print row
+        
         if( len(row) < 3 ):
             err = "format error(row %d): name position PA PA..." %(r+1)
             break
@@ -436,7 +436,7 @@ def parse_game_record(away_team_name, away_scores, away_table, home_team_name, h
     
     err = ""
     game = Game()
-    print away_table 
+    
     game.away, err = make_team(away_team_name, away_scores, away_table)
     if( err != "" ):
         err += " in Away record"
