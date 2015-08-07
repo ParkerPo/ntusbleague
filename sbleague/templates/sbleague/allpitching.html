@@ -3,14 +3,11 @@
 	投手排行
 {% endblock title %}
 
-{% block navbar %}
-	<ul class="nav navbar-nav">
-		<li><a href="/game">賽程</a></li>
-	   	<li><a href="/team">球隊</a></li>
-	   	<li><a href="/batting/avg">打擊排行</a></li>
-	   	<li class="active"><a href="/pitching/win">投手排行</a></li>
-	</ul>
-{% endblock navbar %}
+{% block script %}
+	<script>
+		$('#nav_pitching').addClass('active');
+	</script>
+{% endblock script %}
 
 {% block content %}
 {% if pitching_list %}
@@ -67,15 +64,5 @@
 	</div>
 	
 {% endif %}
-
-    <div class="footer">
-        <div class="container">
-            <div class="row row-center">
-                <div class="fb-box col-center">
-    	            <div class="fb-like-box" data-href="https://www.facebook.com/NTUSBLeague" data-width="400" data-height="300" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="true"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 {% endblock content %}

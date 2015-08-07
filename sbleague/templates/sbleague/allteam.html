@@ -2,42 +2,40 @@
 {% block title %}
 	隊伍列表
 {% endblock title %}
-
-{% block navbar %}
-	<ul class="nav navbar-nav">
-		<li><a href="/game">賽程</a></li>
-	   	<li class="active"><a href="/team">球隊</a></li>
-	   	<li><a href="/batting/avg">打擊排行</a></li>
-	   	<li><a href="/pitching/win">投手排行</a></li>
-	</ul>
-{% endblock navbar %}
+{% block script %}
+	<script>
+		$("li#nav_allteam").addClass("active");
+	</script>
+{% endblock script %}
 
 {% block content %}
+
 	<div class ="container">
 	
 		<table class="table table-hover table-bordered table-condensed">
 			<thead>
 				<tr>
-					<th colspan="17" class="table-title">團隊打擊成績</th>
+					<th colspan="17" class="table-title">團隊{{type}}成績</th>
 				</tr>
+			{%if teams_bat%}
 				<tr class="info">
 					<th>名字</th>
-					<th>打席</th>
-					<th>打數</th>
-					<th>安打</th>
-					<th>一安</th>
-					<th>二安</th>
-					<th>三安</th>
-					<th>全壘</th>
-					<th>打點</th>
-					<th>得分</th>
-					<th>保送</th>
-					<th>三振</th>
-					<th>犧牲</th>
-					<th>打擊率</th>
-					<th>上壘率</th>
-					<th>長打率</th>
-					<th>攻擊指數</th>	
+					<th><a href="/team/bat/pa">打席</a></th>
+					<th><a href="/team/bat/ab">打數</a></th>
+					<th><a href="/team/bat/hit">安打</a></th>
+					<th><a href="/team/bat/single">一安</a></th>
+					<th><a href="/team/bat/double">二安</a></th>
+					<th><a href="/team/bat/triple">三安</a></th>
+					<th><a href="/team/bat/hr">全壘</a></th>
+					<th><a href="/team/bat/rbi">打點</a></th>
+					<th><a href="/team/bat/r">得分</a></th>
+					<th><a href="/team/bat/bb">保送</a></th>
+					<th><a href="/team/bat/so">三振</a></th>
+					<th><a href="/team/bat/sf">犧牲</a></th>
+					<th><a href="/team/bat/avg">打擊率</a></th>
+					<th><a href="/team/bat/obp">上壘率</a></th>
+					<th><a href="/team/bat/slg">長打率</a></th>
+					<th><a href="/team/bat/ops">攻擊指數</a></th>	
 				</tr>
 			</thead>
 			<tbody>
@@ -64,94 +62,79 @@
 				{% endfor %}
 					<tr class="success">
 						<td>聯盟</td>
-						<td>{{league_bat.pa}}</td>
-						<td>{{league_bat.ab}}</td>
-						<td>{{league_bat.hit}}</td>
-						<td>{{league_bat.single}}</td>
-						<td>{{league_bat.double}}</td>
-						<td>{{league_bat.triple}}</td>
-						<td>{{league_bat.hr}}</td>
-						<td>{{league_bat.rbi}}</td>
-						<td>{{league_bat.r}}</td>
-						<td>{{league_bat.bb}}</td>
-						<td>{{league_bat.so}}</td>
-						<td>{{league_bat.sf}}</td>
-						<td>{{league_bat.avg_s}}</td>
-						<td>{{league_bat.obp_s}}</td>
-						<td>{{league_bat.slg_s}}</td>
-						<td>{{league_bat.ops_s}}</td>
+						<td>{{league.pa}}</td>
+						<td>{{league.ab}}</td>
+						<td>{{league.hit}}</td>
+						<td>{{league.single}}</td>
+						<td>{{league.double}}</td>
+						<td>{{league.triple}}</td>
+						<td>{{league.hr}}</td>
+						<td>{{league.rbi}}</td>
+						<td>{{league.r}}</td>
+						<td>{{league.bb}}</td>
+						<td>{{league.so}}</td>
+						<td>{{league.sf}}</td>
+						<td>{{league.avg_s}}</td>
+						<td>{{league.obp_s}}</td>
+						<td>{{league.slg_s}}</td>
+						<td>{{league.ops_s}}</td>
 					</tr>
+			{% else %}
+					<tr class="info">
+						<th>隊名</th>
+						<th><a href="/team/pit/pa">打席</a></th>
+						<th><a href="/team/pit/inning">局數</a></th>
+						<th><a href="/team/pit/so">奪三振</a></th>
+						<th><a href="/team/pit/bb">保送</a></th>
+						<th><a href="/team/pit/h">被安打</a></th>
+						<th><a href="/team/pit/hr">被全壘打</a></th>
+						<th><a href="/team/pit/r">失分</a></th>
+						<th><a href="/team/pit/er">責失分</a></th>
+						<th><a href="/team/pit/go">滾地出局</a></th>
+						<th><a href="/team/pit/fo">飛球出局</a></th>
+						<th><a href="/team/pit/bb_inning">保送/局數</a></th>
+						<th><a href="/team/pit/era">防禦率</a></th>
+						<th><a href="/team/pit/whip">被上壘率</a></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for team_pit in teams_pit %}
+					<tr>
+						<td><a href="/team/{{team_pit.id}}">{{team_pit.name}}</a></td>
+						<td>{{team_pit.pa}}</td>
+						<td>{{team_pit.inning}}</td>
+						<td>{{team_pit.so}}</td>
+						<td>{{team_pit.bb}}</td>
+						<td>{{team_pit.h}}</td>
+						<td>{{team_pit.hr}}</td>
+						<td>{{team_pit.r}}</td>
+						<td>{{team_pit.er}}</td>
+						<td>{{team_pit.go}}</td>
+						<td>{{team_pit.fo}}</td>
+						<td>{{team_pit.bb_inning_s}}</td>
+						<td>{{team_pit.era_s}}</td>
+						<td>{{team_pit.whip_s}}</td>
+					</tr>
+					{% endfor %}
+					<tr class="success">
+						<td>聯盟</td>
+						<td>{{league.pa}}</td>
+						<td>{{league.inning}}</td>
+						<td>{{league.so}}</td>
+						<td>{{league.bb}}</td>
+						<td>{{league.h}}</td>
+						<td>{{league.hr}}</td>
+						<td>{{league.r}}</td>
+						<td>{{league.er}}</td>
+						<td>{{league.go}}</td>
+						<td>{{league.fo}}</td>
+						<td>{{league.bb_inning_s}}</td>
+						<td>{{league.era_s}}</td>
+						<td>{{league.whip_s}}</td>
+					</tr>
+			{% endif %}
 			</tbody>
 		</table>
 
-		<table class="table table-hover table-bordered table-condensed">
-			<thead>
-				<tr>
-					<th colspan="17" class="table-title">團隊投球成績</th>
-				</tr>
-				<tr class="info">
-					<th>隊名</th>
-					<th>打席</th>
-					<th>局數</th>
-					<th>奪三振</th>
-					<th>保送</th>
-					<th>被安打</th>
-					<th>被全壘打</th>
-					<th>失分</th>
-					<th>責失分</th>
-					<th>滾地出局</th>
-					<th>飛球出局</th>
-					<th>保送/局數</th>
-					<th>防禦率</th>
-					<th>被上壘率</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for team_pit in teams_pit %}
-				<tr>
-					<td><a href="/team/{{team_pit.id}}">{{team_pit.name}}</a></td>
-					<td>{{team_pit.pa}}</td>
-					<td>{{team_pit.inning}}</td>
-					<td>{{team_pit.so}}</td>
-					<td>{{team_pit.bb}}</td>
-					<td>{{team_pit.h}}</td>
-					<td>{{team_pit.hr}}</td>
-					<td>{{team_pit.r}}</td>
-					<td>{{team_pit.er}}</td>
-					<td>{{team_pit.go}}</td>
-					<td>{{team_pit.fo}}</td>
-					<td>{{team_pit.bb_inning_s}}</td>
-					<td>{{team_pit.era_s}}</td>
-					<td>{{team_pit.whip_s}}</td>
-				</tr>
-				{% endfor %}
-				<tr class="success">
-					<td>聯盟</td>
-					<td>{{league_pit.pa}}</td>
-					<td>{{league_pit.inning}}</td>
-					<td>{{league_pit.so}}</td>
-					<td>{{league_pit.bb}}</td>
-					<td>{{league_pit.h}}</td>
-					<td>{{league_pit.hr}}</td>
-					<td>{{league_pit.r}}</td>
-					<td>{{league_pit.er}}</td>
-					<td>{{league_pit.go}}</td>
-					<td>{{league_pit.fo}}</td>
-					<td>{{league_pit.bb_inning_s}}</td>
-					<td>{{league_pit.era_s}}</td>
-					<td>{{league_pit.whip_s}}</td>
-				</tr>
-			</tbody>
-		</table>
 	</div>
-	
-    <div class="footer">
-        <div class="container">
-            <div class="row row-center">
-                <div class="fb-box col-center">
-    	            <div class="fb-like-box" data-href="https://www.facebook.com/NTUSBLeague" data-width="400" data-height="300" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="true"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock content %}

@@ -237,7 +237,6 @@ def allbatting(request, order="avg"):
 
 def allpitching(request, order="win"):
     
-	print order
 	increase_order = ["era", "whip", "bb_inning", "er", "r", "hr", "h", "bb"]
 	if( order in increase_order ):
 		rev = False
@@ -251,7 +250,7 @@ def allpitching(request, order="win"):
 	context = {'pitching_list': pitching_list}
 	return render(request , 'sbleague/allpitching.html',context)
 
-def team(request , team_id) :
+def team(request , team_id , order="hit") :
 	thisteam = Team.objects.get(teamID = team_id)
 	team_info = TeamStat()
 	team_info.name 	 = thisteam.name
@@ -325,6 +324,7 @@ def team(request , team_id) :
 			members_bat.append(hitter)
 			team_bat.add(hitter)
 			team_bat.stat()
+		members_bat=sorted(members_bat,key=attrgetter(order),reverse=True)
 
 		#pitching data
 		pit = Pitching.objects.filter(member__memberID = player.memberID , team = thisteam.teamID)
@@ -357,58 +357,64 @@ def team(request , team_id) :
 
 	return render(request , 'sbleague/team.html',context)
 
-def allteam(request):
+def allteam(request,pos,order):
 	teams = Team.objects.filter(current__gt=0)
-	allteam_bat = []
 	allteam_pit = []
-	league_bat = Hitter()
-	league_pit = Pitcher()
-	for t in teams :
-		hitter=Hitter()
-		bat_all = Batting.objects.filter(team=t.teamID)
-		hitter.name = t.name
-		hitter.id = t.teamID
-		for bat_detail in bat_all :
-			hitter.pa += bat_detail.pa
-			hitter.single +=bat_detail.single
-			hitter.double +=bat_detail.double
-			hitter.triple +=bat_detail.triple
-			hitter.hr += bat_detail.hr
-			hitter.rbi += bat_detail.rbi
-			hitter.r += bat_detail.run
-			hitter.bb+= bat_detail.bb
-			hitter.so +=bat_detail.so
-			hitter.sf +=bat_detail.sf
+	allteam_bat = []
 
-		pitcher = Pitcher()
-		pit_all = Pitching.objects.filter(team=t.teamID)
-		pitcher.id = t.teamID
-		pitcher.name=t.name
-		for pit_detail in pit_all :
-			pitcher.win+=pit_detail.win
-			pitcher.lose+=pit_detail.lose
-			pitcher.outs+=pit_detail.outs
-			pitcher.pa+=pit_detail.pa
-			pitcher.so+=pit_detail.so
-			pitcher.bb+=pit_detail.bb
-			pitcher.h+=pit_detail.h
-			pitcher.hr+=pit_detail.hr
-			pitcher.r+=pit_detail.r
-			pitcher.er+=pit_detail.er
-			pitcher.go+=pit_detail.go
-			pitcher.fo+=pit_detail.fo
+	if pos == "bat" :
+		league = Hitter()
+		for t in teams :
+			hitter=Hitter()
+			bat_all = Batting.objects.filter(team=t.teamID)
+			hitter.name = t.name
+			hitter.id = t.teamID
+			for bat_detail in bat_all :
+				hitter.pa += bat_detail.pa
+				hitter.single +=bat_detail.single
+				hitter.double +=bat_detail.double
+				hitter.triple +=bat_detail.triple
+				hitter.hr += bat_detail.hr
+				hitter.rbi += bat_detail.rbi
+				hitter.r += bat_detail.run
+				hitter.bb+= bat_detail.bb
+				hitter.so +=bat_detail.so
+				hitter.sf +=bat_detail.sf
+			hitter.stat()
+			allteam_bat.append(hitter)
+			league.add(hitter)
+		pos = "打擊"
+		allteam_bat=sorted(allteam_bat,key=attrgetter(order),reverse=True)
 
-		hitter.stat()
-		pitcher.stat()
-		allteam_bat.append(hitter)
-		allteam_pit.append(pitcher)
-		league_bat.add(hitter)
-		league_pit.add(pitcher)
+	elif pos == "pit":
+		league = Pitcher()
+		for t in teams: 
+			pitcher = Pitcher()
+			pit_all = Pitching.objects.filter(team=t.teamID)
+			pitcher.id = t.teamID
+			pitcher.name=t.name
+			for pit_detail in pit_all :
+				pitcher.win+=pit_detail.win
+				pitcher.lose+=pit_detail.lose
+				pitcher.outs+=pit_detail.outs
+				pitcher.pa+=pit_detail.pa
+				pitcher.so+=pit_detail.so
+				pitcher.bb+=pit_detail.bb
+				pitcher.h+=pit_detail.h
+				pitcher.hr+=pit_detail.hr
+				pitcher.r+=pit_detail.r
+				pitcher.er+=pit_detail.er
+				pitcher.go+=pit_detail.go
+				pitcher.fo+=pit_detail.fo
 
-	league_bat.stat()
-	league_pit.stat()
+			pitcher.stat()
+			allteam_pit.append(pitcher)
+			league.add(pitcher)
+		pos="投球"
+		allteam_pit=sorted(allteam_pit,key=attrgetter(order),reverse=True)
 
-	context={'teams_bat' : allteam_bat , 'teams_pit' : allteam_pit , 'league_bat':league_bat ,'league_pit':league_pit}
+	league.stat()
+	context={'type':pos, 'teams_bat' : allteam_bat , 'teams_pit' : allteam_pit , 'league':league}
 	return render(request , 'sbleague/allteam.html',context)
 
 
