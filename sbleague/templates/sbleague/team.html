@@ -20,18 +20,21 @@
 						<th>勝</th>
 						<th>負</th>
 						<th>和</th>
-						<th>勝率</th>
+						
 					</tr>
 				</thead>
 				<tbody>
+					{% for team,value in team_overall.items %}
 					<tr>
-						<td>2014</td>
-						<td>{{team_info.game_played}}</td>
-						<td>{{team_info.win}}</td>
-						<td>{{team_info.lose}}</td>
-						<td>{{team_info.tie}}</td>
-						<td>{{team_info.percent}}</td>
-						</tr>
+						<td>{{team}}</td>
+						<td>{{value.game_played}}</td>
+						<td>{{value.win}}</td>
+						<td>{{value.lose}}</td>
+						<td>{{value.tie}}</td>
+						
+					</tr>
+					{% endfor %}
+					
 				</tbody>
 			</table>
 		</div>

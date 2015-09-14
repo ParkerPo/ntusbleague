@@ -22,6 +22,7 @@ class Team(models.Model):
 
 class Member(models.Model):
 	memberID = models.AutoField(primary_key=True)
+	current = models.IntegerField(max_length=1)
 	name = models.CharField(max_length=50)
 	studentID = models.CharField(max_length=9)
 	number = models.IntegerField(default=0)

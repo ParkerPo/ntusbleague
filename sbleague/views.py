@@ -13,23 +13,20 @@ from player import rdBatter, rdPitcher
 from django.http import HttpResponse
 import mimetypes, os
 from django.core.servers.basehttp import FileWrapper
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # Create your views here.
 def index(request) : 
 
-	league_name = ['League A', 'League B']
-	league_list = []
-	for i in range(2):
-		league = League()
-		league.name = league_name[i]
-		league_list.append(league)
-
-	games = Game.objects.all()
-
+	team_list={}
+	
+	games = Game.objects.filter(gameID__gte = 4000)
+	
 	# --- team ranking
 	teams = Team.objects.filter(current__gte = 1)
 
+	team_list=[]
 	team_map = {}
 	for team in teams:
 		t = TeamStat()
@@ -55,28 +52,29 @@ def index(request) :
 
 	for team in team_map.values():
 		team.stat()
-		if(team.current == 1):
-			league_list[0].team_list.append(team)
-		else: # current == 2
-			league_list[1].team_list.append(team)
+		team_list.append(team)
+		# if(team.current == 1):
+		# 	league_list[0].team_list.append(team)
+		# else: # current == 2
+		# 	league_list[1].team_list.append(team)
 
-	for league in league_list:
-		team_list = sorted(league.team_list, key=attrgetter('percent'), reverse=True)
+	
+	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
 
-		top = team_list[0]
-		for team in team_list:
-			team.GB = ( (top.win - team.win) + (team.lose -  top.lose) ) / 2.0
+	top = team_list[0]
+	for team in team_list:
+		team.GB = ( (top.win - team.win) + (team.lose -  top.lose) ) / 2.0
 
-		team_list = sorted(team_list , key=attrgetter('percent'), reverse=True)
-		team_list = sorted(team_list , key=attrgetter('GB'))
-		team_list[0].GB = '-'
-		league.team_list = team_list
+	team_list = sorted(team_list , key=attrgetter('percent'), reverse=True)
+	team_list = sorted(team_list , key=attrgetter('GB'))
+	team_list[0].GB = '-'
+	
 
 
 	players = Member.objects.all()
 	# --- batting ranking
 	thr = 1
-	batting_list = calculate_batting_rank(players,thr)
+	batting_list = calculate_batting_rank(players)
 	batting_list = filter(lambda list : not list.name.startswith("OB"),batting_list)
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.pa),int(x.pa)))
@@ -116,20 +114,20 @@ def index(request) :
 	whip_list = pitching_list[0:5]
 	
 
-	context = {'league_list' : league_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list, 'rbi_list': rbi_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list}
+	context = {'team_list' : team_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list, 'rbi_list': rbi_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list}
 	
 	return render (request, 'sbleague/index.html', context)
 
-def calculate_batting_rank(players,thr=0):
+def calculate_batting_rank(players,year=4):
 	
 	player_map = {}
-	batting_all = Batting.objects.filter(pa__gte=thr)
+	batting_all = Batting.objects.filter(game__gameID__gte=year*1000)
 
 	teams=Team.objects.all()
 	team_gamecount=[]
 	for team in teams:
-		home=Game.objects.filter(home=team).count()
-		away=Game.objects.filter(away=team).count()
+		home=Game.objects.filter(home=team,gameID__gte=year*1000).count()
+		away=Game.objects.filter(away=team,gameID__gte=year*1000).count()
 		count=home+away
 		team_gamecount.append([team,count])
 
@@ -156,6 +154,7 @@ def calculate_batting_rank(players,thr=0):
 		player_map[id].sf 			+= batting.sf
 		player_map[id].games_played += 1
 
+
 	for player in player_map.values():
 		if len(team_gamecount)!=0 :
 			for team in team_gamecount:
@@ -168,13 +167,13 @@ def calculate_batting_rank(players,thr=0):
 			player.stat()
 
 	batting_list = player_map.values()
-	
+
 	return batting_list
 
-def calculate_pitching_rank(players,thr=0):
+def calculate_pitching_rank(players,thr=0,year=4):
 	
 	player_map = {}
-	pitching_all = Pitching.objects.filter(pa__gte=thr)
+	pitching_all = Pitching.objects.filter(pa__gte=thr,game__gameID__gte=year*1000)
 	
 	teams=Team.objects.all()
 	team_gamecount=[]
@@ -250,15 +249,27 @@ def allpitching(request, order="win"):
 	context = {'pitching_list': pitching_list}
 	return render(request , 'sbleague/allpitching.html',context)
 
-def team(request , team_id , order="hit") :
+def team(request , team_id , order="hit",y=4) :
 	thisteam = Team.objects.get(teamID = team_id)
-	team_info = TeamStat()
+	team_info = TeamStat()	#init
 	team_info.name 	 = thisteam.name
 	team_info.teamID = thisteam.teamID
+	team_overall={}  #勝敗和那邊
 
-	game_all = Game.objects.filter(Q(away = team_id) | Q(home = team_id) )
+	game_all = Game.objects.filter(Q(away = team_id) | Q(home = team_id)).order_by('gameID')
 	game_list = []
 	for game in game_all:
+		year = game.gameID/1000 + 2011
+
+		if not team_overall.has_key(year) :
+			team_overall[year]=TeamStat()
+			team_overall[year].year=year;
+			team_overall[year].win=0;
+			team_overall[year].lose=0;
+			team_overall[year].tie=0;
+			team_overall[year].game_played=0;
+			
+
 		g = GameStat()
 
 		if( game.away.teamID != int(team_id) ):
@@ -269,29 +280,32 @@ def team(request , team_id , order="hit") :
 		game_result = game.get_result()
 		if( len(game_result) == 0 ):
 			result = '和'
-			team_info.tie += 1
+			team_overall[year].tie += 1
 		elif( game_result[0].teamID == int(team_id) ):
 			result = '勝'
-			team_info.win += 1
+			team_overall[year].win += 1
 		else:
 			result = '敗'
-			team_info.lose += 1
+			team_overall[year].lose += 1
 
-		team_info.game_played += 1
+		team_overall[year].game_played += 1
 
 		scores = game.get_scores()
 
-		g.gameID 	= game.gameID
-		g.date 		= game.date
-		g.location 	= game.location
-		g.opp 		= opp
-		g.scores 	= str(sum(scores[0])) + ' : ' + str(sum(scores[1]))
-		g.result 	= result
-		game_list.append(g)
+		if game.gameID >= y*1000 and game.gameID <= (y+1)*1000: 
+			
+			g.gameID 	= game.gameID
+			g.date 		= game.date
+			g.location 	= game.location
+			g.opp 		= opp
+			g.scores 	= str(sum(scores[0])) + ' : ' + str(sum(scores[1]))
+			g.result 	= result
+			game_list.append(g)
 	
 	# sort by date
+
+
 	game_list = sorted(game_list , key=attrgetter('date'))
-	team_info.stat()
 
 	members = Member.objects.filter(team__teamID = team_id)
 
@@ -302,7 +316,7 @@ def team(request , team_id , order="hit") :
 
 	for player in members:
 		#batting data
-		bat = Batting.objects.filter(member__memberID = player.memberID , team = thisteam.teamID)
+		bat = Batting.objects.filter(member__memberID = player.memberID , team = thisteam.teamID,game__gameID__gte=y*1000)
 		
 		if bat.exists() :
 			hitter = Hitter()
@@ -327,7 +341,7 @@ def team(request , team_id , order="hit") :
 		members_bat=sorted(members_bat,key=attrgetter(order),reverse=True)
 
 		#pitching data
-		pit = Pitching.objects.filter(member__memberID = player.memberID , team = thisteam.teamID)
+		pit = Pitching.objects.filter(member__memberID = player.memberID , team = thisteam.teamID,game__gameID__gte=y*1000)
 		if pit.exists() :
 			pitcher = Pitcher()
 
@@ -353,11 +367,11 @@ def team(request , team_id , order="hit") :
 			team_pit.add(pitcher)
 			team_pit.stat()
 
-	context = {'thisteam' : thisteam, 'team_info':team_info, 'game_list': game_list, 'members_bat': members_bat ,'members_pit':members_pit, 'team_bat' : team_bat, 'team_pit' : team_pit}
+	context = {'thisteam' : thisteam, 'team_info':team_info, 'game_list': game_list, 'members_bat': members_bat ,'members_pit':members_pit, 'team_bat' : team_bat, 'team_pit' : team_pit,'team_overall':team_overall}
 
 	return render(request , 'sbleague/team.html',context)
 
-def allteam(request,pos,order):
+def allteam(request,pos,order,year=4):
 	teams = Team.objects.filter(current__gt=0)
 	allteam_pit = []
 	allteam_bat = []
@@ -366,7 +380,7 @@ def allteam(request,pos,order):
 		league = Hitter()
 		for t in teams :
 			hitter=Hitter()
-			bat_all = Batting.objects.filter(team=t.teamID)
+			bat_all = Batting.objects.filter(team=t.teamID,game__gameID__gte=year*1000)
 			hitter.name = t.name
 			hitter.id = t.teamID
 			for bat_detail in bat_all :
@@ -390,7 +404,7 @@ def allteam(request,pos,order):
 		league = Pitcher()
 		for t in teams: 
 			pitcher = Pitcher()
-			pit_all = Pitching.objects.filter(team=t.teamID)
+			pit_all = Pitching.objects.filter(team=t.teamID,game__gameID__gte=year*1000)
 			pitcher.id = t.teamID
 			pitcher.name=t.name
 			for pit_detail in pit_all :
@@ -844,3 +858,45 @@ def mod(request,game_id):
 
 		return redirect("/game/"+str(game_id))
 
+@login_required(login_url='/admin')
+def register(request):
+	if request.method != 'POST' :  #第一次進來
+		teams = Team.objects.order_by("current")
+		context={'teams':teams,'thirty':range(30)}
+		return render(request,"sbleague/register.html",context)
+
+	else :
+		team_n = request.POST.get("team","")
+		team = Team.objects.get(teamID=int(team_n))
+		for i in range(30) : 
+			name = request.POST.get("name_"+str(i),"")
+			number = request.POST.get("number_"+str(i),"")
+			stu_id = request.POST.get("id_"+str(i),"") 
+			old_id = request.POST.get("old_id"+str(i),"")
+
+			if len(name)>0:
+				try:
+					player=Member.objects.get(studentID = stu_id)
+				except ObjectDoesNotExist:
+					#找不到，先看看是不換學號
+					try:
+						player = Member.objects.get(studentID = old_id)
+					except ObjectDoesNotExist:
+						#又找不到，是新的人
+						member = Member(name=name,number=number,studentID=stu_id,current=1,team=team)
+						member.save()
+
+						continue
+						
+					player.studentID = stu_id
+					player.team = team
+
+				#找到了
+				player.save()
+				
+			else:
+				break
+
+		teams = Team.objects.order_by("current")
+		context={'teams':teams,'thirty':range(30),'alert':team.name}
+		return render(request,"sbleague/register.html",context)
