@@ -599,8 +599,8 @@ def newgame(request):
 		hometeam = Team.objects.get(pk=home_teamID)
 		awayteam = Team.objects.get(pk=away_teamID)
 
-		homeplayer = Member.objects.filter(team = home_teamID).order_by("number")
-		awayplayer = Member.objects.filter(team = away_teamID).order_by("number")
+		homeplayer = Member.objects.filter(team = home_teamID,current=1).order_by("number")
+		awayplayer = Member.objects.filter(team = away_teamID,current=1).order_by("number")
 
 		date = request.POST.get("date", "")
 		location = request.POST.get("location", "")		

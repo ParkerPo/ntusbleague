@@ -286,9 +286,9 @@ def res2word(pa, wordLen):
         elif( res == "1B" ):
             word = "安"
         elif( res == "2B" ):
-            word = "二"
+            word = "２"
         elif( res == "3B" ):
-            word = "三"
+            word = "３"
         elif( res == "HR" ):
             word = "全"
         elif( res == "FC" ):
