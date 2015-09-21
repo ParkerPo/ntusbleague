@@ -299,6 +299,8 @@ def res2word(pa, wordLen):
             word = "失"
         elif( res == "DP" ):
             word = "雙"
+        elif (res== "FO"):
+            word = "飛"
         else:
             print "Error! Unknown res notation %s" %res
             sys.exit(0)  
@@ -316,7 +318,7 @@ def res2word(pa, wordLen):
         elif( res == "1B" ):
             word = "一安"
         elif( res == "2B" ):
-            word = "二安"
+            word = "２安"
         elif( res == "3B" ):
             word = "三安"
         elif( res == "HR" ):

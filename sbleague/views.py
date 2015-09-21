@@ -585,7 +585,7 @@ def game(request , game_id) :
 @login_required(login_url='/admin')
 def newgame(request):
 	if request.method != 'POST':
-		teams = Team.objects.all()
+		teams = Team.objects.filter(current=1)
 		context = {'teams':teams}
 		return render (request , 'sbleague/newgame.html',context)
 
