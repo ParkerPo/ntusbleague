@@ -876,12 +876,12 @@ def register(request):
 
 			if len(name)>0:
 				try:
-					player=Member.objects.get(studentID = stu_id)
+					player=Member.objects.get(studentID__iexact = stu_id)
 				except ObjectDoesNotExist:
 					#找不到，先看看是不換學號
 					print "change or new?"
 					try:
-						player = Member.objects.get(studentID = old_id)
+						player = Member.objects.get(studentID__iexact = old_id)
 					except ObjectDoesNotExist:
 						#又找不到，是新的人
 						print "new"
@@ -905,3 +905,16 @@ def register(request):
 		teams = Team.objects.order_by("current")
 		context={'teams':teams,'thirty':range(30),'alert':team.name}
 		return render(request,"sbleague/register.html",context)
+
+@login_required(login_url='/admin')
+def nowplayer(request):
+	if request.method != 'POST' :  #第一次進來
+		teams = Team.objects.filter(current=1)
+		context={'teams':teams,'thirty':range(30)}
+		
+	else:
+		team_n = request.POST.get("team","")
+		teams = Team.objects.filter(current=1)
+		players = Member.objects.filter(team__teamID=team_n,current=1)
+		context = {'players':players,'teams':teams}
+	return render(request,"sbleague/nowplayer.html",context)

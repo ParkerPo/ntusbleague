@@ -19,5 +19,6 @@ urlpatterns = [
     url(r'^login$',views.login),
     url(r'^logout$',views.logout),
     url(r'^mod/(?P<game_id>\d+)$',views.mod),
-    url(r'^register/',views.register,name="register"),
+    url(r'^register$',views.register,name="register"),
+    url(r'^nowplayer$',views.nowplayer,name="nowplayer")
 ]
