@@ -75,7 +75,7 @@ def index(request) :
 	# --- batting ranking
 	thr = 1
 	batting_list = calculate_batting_rank(players)
-	batting_list = filter(lambda list : not list.name.startswith("OB"),batting_list)
+	#batting_list = filter(lambda list : not list.name.startswith("OB"),batting_list)
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.pa),int(x.pa)))
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(float(y.avg),float(x.avg)))
@@ -94,8 +94,8 @@ def index(request) :
 
 	# --- pitching ranking
 	thr = 1
-	pitching_list = calculate_pitching_rank(players,thr)
-	pitching_list = filter(lambda list : not list.name.startswith("OB"),pitching_list)
+	pitching_list = calculate_pitching_rank(players)
+	#pitching_list = filter(lambda list : not list.name.startswith("OB"),pitching_list)
 
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(int(y.outs),float(x.outs)))
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
@@ -122,6 +122,7 @@ def calculate_batting_rank(players,year=4):
 	
 	player_map = {}
 	batting_all = Batting.objects.filter(game__gameID__gte=year*1000)
+	batting_all = filter(lambda list : not list.member.name.startswith("OB"),batting_all)
 
 	teams=Team.objects.all()
 	team_gamecount=[]
@@ -170,16 +171,18 @@ def calculate_batting_rank(players,year=4):
 
 	return batting_list
 
-def calculate_pitching_rank(players,thr=0,year=4):
+def calculate_pitching_rank(players,year=4):
 	
 	player_map = {}
-	pitching_all = Pitching.objects.filter(pa__gte=thr,game__gameID__gte=year*1000)
+	pitching_all = Pitching.objects.filter(game__gameID__gte=year*1000)
+	pitching_all = filter(lambda list : not list.member.name.startswith("OB"),pitching_all)
+	
 	
 	teams=Team.objects.all()
 	team_gamecount=[]
 	for team in teams:
-		home=Game.objects.filter(home=team).count()
-		away=Game.objects.filter(away=team).count()
+		home=Game.objects.filter(home=team,gameID__gte=year*1000).count()
+		away=Game.objects.filter(away=team,gameID__gte=year*1000).count()
 		count=home+away
 		team_gamecount.append([team,count])
 
@@ -207,6 +210,7 @@ def calculate_pitching_rank(players,thr=0,year=4):
 		player_map[id].go			+= pitching.go
 		player_map[id].fo			+= pitching.fo
 		player_map[id].games_played += 1
+
 
 	for player in player_map.values():
 		if len(team_gamecount)!=0 :
