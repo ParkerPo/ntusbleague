@@ -861,7 +861,7 @@ def mod(request,game_id):
 @login_required(login_url='/admin')
 def register(request):
 	if request.method != 'POST' :  #第一次進來
-		teams = Team.objects.order_by("current")
+		teams = Team.objects.filter(current=1)
 		context={'teams':teams,'thirty':range(30)}
 		return render(request,"sbleague/register.html",context)
 
@@ -879,17 +879,22 @@ def register(request):
 					player=Member.objects.get(studentID = stu_id)
 				except ObjectDoesNotExist:
 					#找不到，先看看是不換學號
+					print "change or new?"
 					try:
 						player = Member.objects.get(studentID = old_id)
 					except ObjectDoesNotExist:
 						#又找不到，是新的人
+						print "new"
 						member = Member(name=name,number=number,studentID=stu_id,current=1,team=team)
 						member.save()
 
 						continue
 						
-					player.studentID = stu_id
-					player.team = team
+				player.studentID = stu_id
+				player.team = team
+				player.current=1
+				player.number = number
+				player.name = name
 
 				#找到了
 				player.save()
