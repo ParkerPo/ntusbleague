@@ -214,9 +214,9 @@ def calculate_pitching_rank(players,year=4):
 
 	for player in player_map.values():
 		if len(team_gamecount)!=0 :
-			for team in team_gamecount:
+			for team in team_gamecount:ㄇ
 				if team[0] == player.team:
-					if team[1]*6 <= player.outs:
+					if team[1]*2 <= player.outs:
 						#print"-", player.name , team[1]*9 , player.outs
 						player.stat()
 					else:
