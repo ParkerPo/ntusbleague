@@ -153,7 +153,7 @@ class TeamStat:
 		if self.game_played == 0 :
 			self.precent = 0
 		else :
-			self.percent = float(self.win)/self.game_played
+			self.percent = float(self.win)/(self.win + self.lose)
 		self.percent = format(self.percent, '.3f')
 
 class GameStat:
