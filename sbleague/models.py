@@ -69,7 +69,7 @@ class Game(models.Model):
 		return score_array
 
 	def get_result(self):
-		# return [win_team, lose_team]
+		# return [win_team,lose_team,win_score,lose_score] or [away_socre,home_score] when a tie game
 
 		score_array = self.get_scores()
 
@@ -77,11 +77,11 @@ class Game(models.Model):
 		home_score = sum(score_array[1])
 
 		if( away_score > home_score ):
-			return [self.away, self.home]
+			return [self.away, self.home,away_score,home_score]
 		elif( home_score > away_score ):
-			return [self.home, self.away]
+			return [self.home, self.away,home_score,away_score]
 		else: # game tie
-			return []
+			return [away_score,home_score]
 
 
 class Pitching(models.Model):

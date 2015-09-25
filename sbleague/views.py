@@ -43,12 +43,22 @@ def index(request) :
 		team_map[homeID].game_played += 1
 
 		result = game.get_result()
-		if( not result ): # tie
+		if len(result) ==2: # tie
 			team_map[awayID].tie += 1
 			team_map[homeID].tie += 1
+			team_map[awayID].score += result[0]-result[1]
+			#team_map[awayID].allowed += result[1]
+			team_map[homeID].score += result[1]-result[0]
+			#team_map[homeID].allowed += result[0]
 		else:
 			team_map[result[0].teamID].win  += 1
+			team_map[result[0].teamID].score += result[2]-result[3]
+			# team_map[result[0].teamID].allowed +=result[3]
 			team_map[result[1].teamID].lose += 1
+			team_map[result[1].teamID].score +=result[3]-result[2]
+			# team_map[result[1].teamID].allowed +=result[2]
+
+
 
 	for team in team_map.values():
 		team.stat()
@@ -58,15 +68,15 @@ def index(request) :
 		# else: # current == 2
 		# 	league_list[1].team_list.append(team)
 
+	team_list = sorted(team_list,key=attrgetter('lose'))
+	team_list = sorted(team_list, key=attrgetter('percent','score'), reverse=True)
 	
-	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
-
+	
 	top = team_list[0]
 	for team in team_list:
 		team.GB = ( (top.win - team.win) + (team.lose -  top.lose) ) / 2.0
 
-	team_list = sorted(team_list , key=attrgetter('percent'), reverse=True)
-	team_list = sorted(team_list , key=attrgetter('GB'))
+	
 	team_list[0].GB = '-'
 	
 
@@ -282,7 +292,7 @@ def team(request , team_id , order="hit",y=4) :
 			opp = game.home
 
 		game_result = game.get_result()
-		if( len(game_result) == 0 ):
+		if( len(game_result) == 2 ):
 			result = '和'
 			team_overall[year].tie += 1
 		elif( game_result[0].teamID == int(team_id) ):

@@ -140,6 +140,7 @@ class TeamStat:
 		self.tie  			= 0
 		self.percent		= 0.0
 		self.GB 			= 0.0
+		self.score 			= 0
 
 	def reset(self):
 		self.game_played 	= 0
@@ -148,6 +149,7 @@ class TeamStat:
 		self.tie  		 	= 0
 		self.percent 	 	= 0.0
 		self.GB 		 	= 0.0
+		self.score 			= 0
 
 	def stat(self):
 		if self.game_played == 0 :
