@@ -60,6 +60,7 @@ def index(request) :
 
 	
 	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
+	team_list = sorted(team_list, key=attrgetter('lose'))
 
 	top = team_list[0]
 	for team in team_list:
