@@ -43,12 +43,22 @@ def index(request) :
 		team_map[homeID].game_played += 1
 
 		result = game.get_result()
-		if( not result ): # tie
+		if len(result) ==2: # tie
 			team_map[awayID].tie += 1
 			team_map[homeID].tie += 1
+			team_map[awayID].score += result[0]-result[1]
+			#team_map[awayID].allowed += result[1]
+			team_map[homeID].score += result[1]-result[0]
+			#team_map[homeID].allowed += result[0]
 		else:
 			team_map[result[0].teamID].win  += 1
+			team_map[result[0].teamID].score += result[2]-result[3]
+			# team_map[result[0].teamID].allowed +=result[3]
 			team_map[result[1].teamID].lose += 1
+			team_map[result[1].teamID].score +=result[3]-result[2]
+			# team_map[result[1].teamID].allowed +=result[2]
+
+
 
 	for team in team_map.values():
 		team.stat()
@@ -58,7 +68,7 @@ def index(request) :
 		# else: # current == 2
 		# 	league_list[1].team_list.append(team)
 
-	
+
 	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
 	team_list = sorted(team_list, key=attrgetter('lose'))
 
@@ -66,8 +76,7 @@ def index(request) :
 	for team in team_list:
 		team.GB = ( (top.win - team.win) + (team.lose -  top.lose) ) / 2.0
 
-	team_list = sorted(team_list , key=attrgetter('percent'), reverse=True)
-	team_list = sorted(team_list , key=attrgetter('GB'))
+	
 	team_list[0].GB = '-'
 	
 
@@ -283,7 +292,7 @@ def team(request , team_id , order="hit",y=4) :
 			opp = game.home
 
 		game_result = game.get_result()
-		if( len(game_result) == 0 ):
+		if( len(game_result) == 2 ):
 			result = '和'
 			team_overall[year].tie += 1
 		elif( game_result[0].teamID == int(team_id) ):
@@ -437,7 +446,7 @@ def allteam(request,pos,order,year=4):
 	return render(request , 'sbleague/allteam.html',context)
 
 
-def people(request , member_id) :
+def people(request , member_id,y=4) :
 
 	player = Member.objects.get(memberID = member_id)
 
@@ -445,9 +454,18 @@ def people(request , member_id) :
 	game_all 	= Batting.objects.filter(member__memberID = member_id).order_by("game")
 	hitting_list = []
 	hitting_sum  = Hitter()
+	bat_year = {}
+	#整個打者的分年份存的
 	
 	if game_all.exists() :
 		for game_detail in game_all:
+			year = game_detail.game.gameID/1000 + 2011
+
+			if not bat_year.has_key(year):
+				bat_year[year]=Hitter()
+				bat_year[year].year = year
+
+			#把這筆資料先存在Hitter()裡面
 			hitter 			= Hitter()
 			hitter.pa 		= game_detail.pa
 			hitter.single 	= game_detail.single
@@ -459,11 +477,12 @@ def people(request , member_id) :
 			hitter.bb		= game_detail.bb
 			hitter.so 		= game_detail.so
 			hitter.sf 		= game_detail.sf
-
 			hitter.games_played = 1
 			hitter.stat()
 			hitting_sum.add(hitter)
 			hitting_sum.stat()
+			bat_year[year].add(hitter)
+			bat_year[year].stat()
 
 			# accumulated statistic
 			hitter.avg_s	= hitting_sum.avg_s
@@ -485,15 +504,22 @@ def people(request , member_id) :
 			hitter.opp 		= str(opp)
 			hitter.oppID 	= str(opp.teamID)
 
-			hitting_list.append(hitter)
+			if game_detail.game.gameID >=y*1000:
+				hitting_list.append(hitter)
 
 	# --- pitching
 	game_all  	  = Pitching.objects.filter(member__memberID = member_id).order_by("game")
 	pitching_list = []
 	pitching_sum  = Pitcher()
+	pit_year = {}
 	
 	if game_all.exists() :
 		for game_detail in game_all:
+			year = game_detail.game.gameID/1000 + 2011
+			if not pit_year.has_key(year):
+				pit_year[year]=Pitcher()
+				pit_year[year].year = year
+
 			pitcher 		= Pitcher()
 			pitcher.win 	= game_detail.win
 			pitcher.lose 	= game_detail.lose
@@ -512,6 +538,8 @@ def people(request , member_id) :
 			pitcher.stat()
 			pitching_sum.add(pitcher)
 			pitching_sum.stat()
+			pit_year[year].add(pitcher)
+			pit_year[year].stat()
 
 			# accumulated statistic
 			pitcher.bb_inning_s 	= pitching_sum.bb_inning_s
@@ -532,10 +560,11 @@ def people(request , member_id) :
 			pitcher.opp 	= str(opp)
 			pitcher.oppID 	= str(opp.teamID)
 
-			pitching_list.append(pitcher)
+			if game_detail.game.gameID >= y*1000:
+				pitching_list.append(pitcher)
 
 
-	context = {'thispeople' : player, 'name': player.name, 'hitting_list': hitting_list, 'hitting_sum': hitting_sum, 'pitching_list': pitching_list, 'pitching_sum': pitching_sum, }
+	context = {'thispeople' : player, 'name': player.name, 'hitting_list': hitting_list, 'hitting_sum': hitting_sum, 'pitching_list': pitching_list, 'pitching_sum': pitching_sum,'bat_year':bat_year,'pit_year':pit_year }
 
 	return render(request, 'sbleague/people.html', context)
 

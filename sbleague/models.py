@@ -14,7 +14,7 @@ class Team(models.Model):
 		(1,"丁丁聯盟"),
 		(2,"拉拉聯盟"),
 		)
-	current = models.IntegerField(max_length=1, choices=LEAGUE_NAME)
+	current = models.IntegerField(choices=LEAGUE_NAME)
 
 	def __unicode__(self):
 		return self.name
@@ -22,7 +22,7 @@ class Team(models.Model):
 
 class Member(models.Model):
 	memberID = models.AutoField(primary_key=True)
-	current = models.IntegerField(max_length=1)
+	current = models.IntegerField()
 	name = models.CharField(max_length=50)
 	studentID = models.CharField(max_length=9)
 	number = models.IntegerField(default=0)
@@ -69,7 +69,7 @@ class Game(models.Model):
 		return score_array
 
 	def get_result(self):
-		# return [win_team, lose_team]
+		# return [win_team,lose_team,win_score,lose_score] or [away_socre,home_score] when a tie game
 
 		score_array = self.get_scores()
 
@@ -77,11 +77,11 @@ class Game(models.Model):
 		home_score = sum(score_array[1])
 
 		if( away_score > home_score ):
-			return [self.away, self.home]
+			return [self.away, self.home,away_score,home_score]
 		elif( home_score > away_score ):
-			return [self.home, self.away]
+			return [self.home, self.away,home_score,away_score]
 		else: # game tie
-			return []
+			return [away_score,home_score]
 
 
 class Pitching(models.Model):

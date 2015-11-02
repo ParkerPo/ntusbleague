@@ -90,8 +90,31 @@
 				</tr>
 			</thead>
 			<tbody>
+				{% for year,bat in bat_year.items %}
+					
 				<tr>
-					<td>2014</td>
+					<td>{{year}}</td>
+					<td>{{bat.games_played}}</td>
+					<td>{{bat.pa}}</td>
+					<td>{{bat.ab}}</td>
+					<td>{{bat.hit}}</td>
+					<td>{{bat.single}}</td>
+					<td>{{bat.double}}</td>
+					<td>{{bat.triple}}</td>
+					<td>{{bat.hr}}</td>
+					<td>{{bat.rbi}}</td>
+					<td>{{bat.r}}</td>
+					<td>{{bat.bb}}</td>
+					<td>{{bat.so}}</td>
+					<td>{{bat.sf}}</td>
+					<td>{{bat.avg_s}}</td>
+					<td>{{bat.obp_s}}</td>
+					<td>{{bat.slg_s}}</td>
+					<td>{{bat.ops_s}}</td>
+				</tr>		
+				{% endfor %}
+				<tr>
+					<td>生涯</td>
 					<td>{{hitting_sum.games_played}}</td>
 					<td>{{hitting_sum.pa}}</td>
 					<td>{{hitting_sum.ab}}</td>
@@ -193,8 +216,30 @@
 				</tr>
 			</thead>
 			<tbody>
+				{% for year,pit in pit_year.items %}
+					
 				<tr>
-					<td>2014</td>
+					<td>{{year}}</td>
+					<td>{{pit.games_played}}</td>
+					<td>{{pit.win}}</td>
+					<td>{{pit.lose}}</td>
+					<td>{{pit.pa}}</td>
+					<td>{{pit.inning}}</td>
+					<td>{{pit.so}}</td>
+					<td>{{pit.h}}</td>
+					<td>{{pit.bb}}</td>
+					<td>{{pit.hr}}</td>
+					<td>{{pit.r}}</td>
+					<td>{{pit.er}}</td>
+					<td>{{pit.go}}</td>
+					<td>{{pit.fo}}</td>
+					<td>{{pit.bb_inning_s}}</td>
+					<td>{{pit.era_s}}</td>
+					<td>{{pit.whip_s}}</td>
+				</tr>		
+				{% endfor %}
+				<tr>
+					<td>生涯</td>
 					<td>{{pitching_sum.games_played}}</td>
 					<td>{{pitching_sum.win}}</td>
 					<td>{{pitching_sum.lose}}</td>
