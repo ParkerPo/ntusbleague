@@ -94,6 +94,7 @@ class Pitcher :
 		self.fo=0
 		self.era=0
 		self.whip=0
+		self.bb7=0
 		self.bb_inning = 0
 		self.era_s=''
 		self.whip_s=''

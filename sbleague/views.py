@@ -99,8 +99,14 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
 	hr_list = batting_list[0:5]
 
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.rbi),int(x.rbi)))
 	rbi_list = batting_list[0:5]
+
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.bases),int(x.bases)))
+	bases_list = batting_list[0:5]
+
 
 	# --- pitching ranking
 	thr = 1
@@ -122,9 +128,13 @@ def index(request) :
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
 	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.whip),float(y.whip)))
 	whip_list = pitching_list[0:5]
+
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.era),float(y.era)))
+	pitching_list = sorted(pitching_list, cmp=lambda x,y : cmp(float(x.bb_inning),float(y.bb_inning)))
+	bb_list = pitching_list[0:5]	
 	
 
-	context = {'team_list' : team_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list, 'rbi_list': rbi_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list}
+	context = {'team_list' : team_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list, 'rbi_list': rbi_list,'bases_list':bases_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list,'bb_list':bb_list}
 	
 	return render (request, 'sbleague/index.html', context)
 
