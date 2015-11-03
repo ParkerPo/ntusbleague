@@ -485,10 +485,10 @@ def people(request , member_id,y=4) :
 			bat_year[year].stat()
 
 			# accumulated statistic
-			hitter.avg_s	= hitting_sum.avg_s
-			hitter.slg_s	= hitting_sum.slg_s
-			hitter.obp_s	= hitting_sum.obp_s
-			hitter.ops_s	= hitting_sum.ops_s
+			hitter.avg_s	= bat_year[year].avg_s
+			hitter.slg_s	= bat_year[year].slg_s
+			hitter.obp_s	= bat_year[year].obp_s
+			hitter.ops_s	= bat_year[year].ops_s
 			
 			# game information
 			game 			= game_detail.game
@@ -542,9 +542,9 @@ def people(request , member_id,y=4) :
 			pit_year[year].stat()
 
 			# accumulated statistic
-			pitcher.bb_inning_s 	= pitching_sum.bb_inning_s
-			pitcher.era_s 	= pitching_sum.era_s
-			pitcher.whip_s 	= pitching_sum.whip_s
+			pitcher.bb_inning_s 	= pit_year[year].bb_inning_s
+			pitcher.era_s 	= pit_year[year].era_s
+			pitcher.whip_s 	= pit_year[year].whip_s
 			
 			# game information
 			game 			= game_detail.game

@@ -30,6 +30,7 @@ class Hitter :
 		self.slg=0
 		self.obp=0
 		self.ops=0
+		self.bases=0
 		self.avg_s=''
 		self.slg_s=''
 		self.obp_s=''
