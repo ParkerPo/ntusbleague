@@ -69,8 +69,9 @@ def index(request) :
 		# 	league_list[1].team_list.append(team)
 
 
-	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
 	team_list = sorted(team_list, key=attrgetter('lose'))
+	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
+	
 
 	top = team_list[0]
 	for team in team_list:
