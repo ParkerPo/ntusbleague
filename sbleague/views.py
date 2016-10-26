@@ -14,14 +14,18 @@ from django.http import HttpResponse
 import mimetypes, os
 from django.core.servers.basehttp import FileWrapper
 from django.core.exceptions import ObjectDoesNotExist
-
+import time
+def getyear() :
+	now = time.time()
+	start = 1314835200   #2011/9/1
+	return int((now-start)/(60*60*24*365))
 
 # Create your views here.
 def index(request) : 
 
 	team_list={}
 	
-	games = Game.objects.filter(gameID__gte = 4000)
+	games = Game.objects.filter(gameID__gte = getyear()*1000)
 	
 	# --- team ranking
 	teams = Team.objects.filter(current__gte = 1)
@@ -69,7 +73,7 @@ def index(request) :
 		# 	league_list[1].team_list.append(team)
 
 
-	team_list = sorted(team_list, key=attrgetter('lose'))
+	team_list = sorted(team_list, key=attrgetter('win'),reverse=True)
 	team_list = sorted(team_list, key=attrgetter('percent'), reverse=True)
 	
 
@@ -139,7 +143,7 @@ def index(request) :
 	
 	return render (request, 'sbleague/index.html', context)
 
-def calculate_batting_rank(players,year=4):
+def calculate_batting_rank(players,year=getyear()):
 	
 	player_map = {}
 	batting_all = Batting.objects.filter(game__gameID__gte=year*1000)
@@ -192,7 +196,7 @@ def calculate_batting_rank(players,year=4):
 
 	return batting_list
 
-def calculate_pitching_rank(players,year=4):
+def calculate_pitching_rank(players,year=getyear()):
 	
 	player_map = {}
 	pitching_all = Pitching.objects.filter(game__gameID__gte=year*1000)
@@ -274,7 +278,7 @@ def allpitching(request, order="win"):
 	context = {'pitching_list': pitching_list}
 	return render(request , 'sbleague/allpitching.html',context)
 
-def team(request , team_id , order="hit",y=4) :
+def team(request , team_id , order="hit",y=getyear()) :
 	thisteam = Team.objects.get(teamID = team_id)
 	team_info = TeamStat()	#init
 	team_info.name 	 = thisteam.name
@@ -396,7 +400,7 @@ def team(request , team_id , order="hit",y=4) :
 
 	return render(request , 'sbleague/team.html',context)
 
-def allteam(request,pos,order,year=4):
+def allteam(request,pos,order,year=getyear()):
 	teams = Team.objects.filter(current__gt=0)
 	allteam_pit = []
 	allteam_bat = []
@@ -457,12 +461,13 @@ def allteam(request,pos,order,year=4):
 	return render(request , 'sbleague/allteam.html',context)
 
 
-def people(request , member_id,y=4) :
+def people(request , member_id,y=getyear()) :
 
 	player = Member.objects.get(memberID = member_id)
 
 	# --- batting
-	game_all 	= Batting.objects.filter(member__memberID = member_id).order_by("game")
+	game_all 	= Batting.objects.filter(member__memberID = member_id)
+
 	hitting_list = []
 	hitting_sum  = Hitter()
 	bat_year = {}
@@ -517,9 +522,9 @@ def people(request , member_id,y=4) :
 
 			if game_detail.game.gameID >=y*1000:
 				hitting_list.append(hitter)
-
+			
 	# --- pitching
-	game_all  	  = Pitching.objects.filter(member__memberID = member_id).order_by("game")
+	game_all  	  = Pitching.objects.filter(member__memberID = member_id).order_by("game_id")
 	pitching_list = []
 	pitching_sum  = Pitcher()
 	pit_year = {}
@@ -573,7 +578,7 @@ def people(request , member_id,y=4) :
 
 			if game_detail.game.gameID >= y*1000:
 				pitching_list.append(pitcher)
-
+	#bat_year = sorted(bat_year)
 
 	context = {'thispeople' : player, 'name': player.name, 'hitting_list': hitting_list, 'hitting_sum': hitting_sum, 'pitching_list': pitching_list, 'pitching_sum': pitching_sum,'bat_year':bat_year,'pit_year':pit_year }
 
@@ -963,3 +968,13 @@ def nowplayer(request):
 		players = Member.objects.filter(team__teamID=team_n,current=1)
 		context = {'players':players,'teams':teams}
 	return render(request,"sbleague/nowplayer.html",context)
+
+@login_required(login_url="/admin")
+def clear_register(request):
+	players = Member.objects.exclude(name__startswith="OB")
+	for player in players:
+		player.current=0
+
+		player.save()
+
+	return render(request,"sbleague/index.html",context)
