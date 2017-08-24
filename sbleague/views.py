@@ -12,7 +12,7 @@ from parse_record import parse_game_record, text_to_table
 from player import rdBatter, rdPitcher
 from django.http import HttpResponse
 import mimetypes, os
-from django.core.servers.basehttp import FileWrapper
+from wsgiref.util import FileWrapper
 from django.core.exceptions import ObjectDoesNotExist
 
 
