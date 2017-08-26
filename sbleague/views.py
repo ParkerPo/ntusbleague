@@ -212,8 +212,8 @@ def calculate_pitching_rank(players,thr=0,year=4):
 		if len(team_gamecount)!=0 :
 			for team in team_gamecount:
 				if team[0] == player.team:
-					if team[1]*6 <= player.outs:
-						#print"-", player.name , team[1]*9 , player.outs
+					if team[1]*2 <= player.outs:
+						print"-", player.name , team[1]*9 , player.outs
 						player.stat()
 					else:
 						del player_map[player.id]
@@ -861,14 +861,14 @@ def mod(request,game_id):
 @login_required(login_url='/admin')
 def register(request):
 	if request.method != 'POST' :  #第一次進來
-		teams = Team.objects.order_by("current")
+		teams = Team.objects.filter(current__gte = 1)
 		context={'teams':teams,'thirty':range(30)}
 		return render(request,"sbleague/register.html",context)
 
 	else :
 		team_n = request.POST.get("team","")
 		team = Team.objects.get(teamID=int(team_n))
-		for i in range(30) : 
+		for i in range(1,31) : 
 			name = request.POST.get("name_"+str(i),"")
 			number = request.POST.get("number_"+str(i),"")
 			stu_id = request.POST.get("id_"+str(i),"") 
@@ -898,5 +898,5 @@ def register(request):
 				break
 
 		teams = Team.objects.order_by("current")
-		context={'teams':teams,'thirty':range(30),'alert':team.name}
+		context={'teams':teams,'thirty':range(1,31),'alert':team.name}
 		return render(request,"sbleague/register.html",context)
