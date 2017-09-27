@@ -1,8 +1,9 @@
 {% extends "basic.html" %}
 {% block script %}
+
 	{% if alert %}
 		<script>
-		alert({{alert}}+"已經新增完成")
+		alert("{{alert}}已經新增完成")
 		</script>
 	{% endif %}
 {% endblock script %}

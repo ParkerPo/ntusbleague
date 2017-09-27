@@ -8,7 +8,7 @@
 {% if thispeople %}
 
 	<div class="container">
-		<h2>{{name}}</h2>
+		<h2>{{thispeople.name}}</h2><h4>#{{thispeople.number}}</h4>
 		<br>
 		<table class="table table-hover table-bordered table-condensed">
 			<thead>
@@ -88,7 +88,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td>2014</td>
+					<td>2017</td>
 					<td>{{hitting_sum.games_played}}</td>
 					<td>{{hitting_sum.pa}}</td>
 					<td>{{hitting_sum.ab}}</td>
@@ -113,7 +113,7 @@
 
 	</div>
 	<br><br>
-	
+	{%if pitching_list%}
 	<div class="container">
 		<table class="table table-hover table-bordered table-condensed">
 			<thead>
@@ -214,17 +214,8 @@
 
 	</div>
 
-	
+	{%endif%}
 {% endif %}
     
-    <div class="footer">
-        <div class="container">
-            <div class="row row-center">
-                <div class="fb-box col-center">
-    	            <div class="fb-like-box" data-href="https://www.facebook.com/NTUSBLeague" data-width="400" data-height="300" data-colorscheme="light" data-show-faces="true" data-header="true" data-stream="false" data-show-border="true"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 
 {% endblock content %}

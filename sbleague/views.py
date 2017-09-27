@@ -862,7 +862,7 @@ def mod(request,game_id):
 def register(request):
 	if request.method != 'POST' :  #第一次進來
 		teams = Team.objects.filter(current__gte = 1)
-		context={'teams':teams,'thirty':range(30)}
+		context={'teams':teams,'thirty':range(1,31)}
 		return render(request,"sbleague/register.html",context)
 
 	else :
@@ -878,8 +878,10 @@ def register(request):
 				try:
 					player=Member.objects.get(studentID = stu_id)
 				except ObjectDoesNotExist:
+					print "can't find"
 					#找不到，先看看是不換學號
 					try:
+						print "try"
 						player = Member.objects.get(studentID = old_id)
 					except ObjectDoesNotExist:
 						#又找不到，是新的人
@@ -890,13 +892,12 @@ def register(request):
 						
 					player.studentID = stu_id
 					player.team = team
-
 				#找到了
 				player.save()
 				
 			else:
 				break
 
-		teams = Team.objects.order_by("current")
+		teams = Team.objects.filter(current__gte = 1)
 		context={'teams':teams,'thirty':range(1,31),'alert':team.name}
 		return render(request,"sbleague/register.html",context)
