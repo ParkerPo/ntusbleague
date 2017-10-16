@@ -37,7 +37,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','13.59.8.57']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','13.59.8.57','league.parkerpo.info']
 
 
 # Application definition
