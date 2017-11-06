@@ -9,7 +9,7 @@ from dump_record import make_PTT_format, make_database_format, make_web_table
 def text_to_table(text):
     
     table = []
-    lines = text.split('\n')
+    lines = text.split('\r\n')
     for line in lines:
         data = line.split()
         data = filter(None, data)
@@ -127,7 +127,7 @@ def parse_PA(team, order, turn, inning, curr_order):
             pa, err = parse_base(pa, s[2])
 
         else:
-           err = "Incorrect PA format %s\n" %pa.raw_str
+           err = "Incorrect PA format %s\r\n" %pa.raw_str
            return pa, err
 
 
@@ -247,14 +247,14 @@ def print_order_table(table):
             batter  = col[0]
             pa      = col[1]
             sys.stdout.write("%2s  (%d)%-12s" %(batter.number, pa.out, pa.raw_str))
-        sys.stdout.write('\n')
+        sys.stdout.write('\r\n')
 
 def print_batter(batters):
     for p in batters:
         sys.stdout.write("%2s  %2s " %(p.order, p.number) )
         for pa in p.PAs:
             sys.stdout.write("(%d)%-12s " %(pa.column, pa.raw_str) )
-        sys.stdout.write('\n')
+        sys.stdout.write('\r\n')
 
 
 def parse_order_table(team):
