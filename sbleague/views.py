@@ -894,7 +894,7 @@ def register(request):
 			number = request.POST.get("number_"+str(i),"")
 			stu_id = request.POST.get("id_"+str(i),"") 
 			old_id = request.POST.get("old_id"+str(i),"")
-
+			print name
 			if len(name)>0:
 				try:
 					player=Member.objects.get(studentID = stu_id)
@@ -908,12 +908,13 @@ def register(request):
 						#又找不到，是新的人
 						member = Member(name=name,number=number,studentID=stu_id,current=1,team=team)
 						member.save()
-
+						print "add"
 						continue
 						
 					player.studentID = stu_id
 					player.team = team
 				#找到了
+				print player.name,"找到了!?"
 				player.save()
 				
 			else:
