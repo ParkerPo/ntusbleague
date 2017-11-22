@@ -321,6 +321,7 @@ def team(request , team_id , order="hit",y=4) :
 		if bat.exists() :
 			hitter = Hitter()
 			for bat_detail in bat:
+				hitter.number = player.number
 				hitter.name = player.name
 				hitter.id = player.memberID
 				hitter.games_played += 1
@@ -341,6 +342,7 @@ def team(request , team_id , order="hit",y=4) :
 		# evan code
 		else:
 			hitter = Hitter()
+			hitter.number = player.number
 			hitter.name = player.name
 			hitter.id = player.memberID
 			hitter.games_played = 0
@@ -358,6 +360,8 @@ def team(request , team_id , order="hit",y=4) :
 			members_bat.append(hitter)
 			team_bat.add(hitter)
 			team_bat.stat()
+		if(hitter.number == -1):
+			hitter.number = "--"
 		# end evan code
 		members_bat=sorted(members_bat,key=attrgetter(order),reverse=True)
 
@@ -367,6 +371,7 @@ def team(request , team_id , order="hit",y=4) :
 			pitcher = Pitcher()
 
 			for pit_detail in pit:
+				pitcher.number = player.number
 				pitcher.name = player.name
 				pitcher.games_played +=1
 				pitcher.id = player.memberID
