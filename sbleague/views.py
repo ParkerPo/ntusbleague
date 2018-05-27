@@ -85,7 +85,7 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
 
-	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+# 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
 	hr_list = batting_list[0:5]
 
