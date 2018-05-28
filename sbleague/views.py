@@ -85,7 +85,7 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
 
-	batting_list2 = calculate_batting_rank(players,checkGameCount=False)
+	batting_list2 = calculate_batting_rank(players=players,checkGameCount=False)
 	batting_list2 = filter(lambda list : not list.name.startswith("OB"),batting_list)
 	batting_list2 = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
 	batting_list2 = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
