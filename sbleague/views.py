@@ -85,11 +85,9 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
 
-	batting_list2 = calculate_batting_rank(players,gameCountCheck=False)
-	batting_list2 = filter(lambda list : not list.name.startswith("OB"),batting_list)
-	batting_list2 = sorted(batting_list2, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
-	batting_list2 = sorted(batting_list2, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
-	hr_list = batting_list2[0:5]
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
+	hr_list = batting_list[0:5]
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.rbi),int(x.rbi)))
 	rbi_list = batting_list[0:5]
@@ -120,8 +118,7 @@ def index(request) :
 	
 	return render (request, 'sbleague/index.html', context)
 
-#gameCountCheck =>hr false
-def calculate_batting_rank(players,year=4,gameCountCheck=True):
+def calculate_batting_rank(players,year=4):
 	
 	player_map = {}
 	batting_all = Batting.objects.filter(game__gameID__gte=year*1000)
@@ -157,25 +154,17 @@ def calculate_batting_rank(players,year=4,gameCountCheck=True):
 		player_map[id].sf 			+= batting.sf
 		player_map[id].games_played += 1
 
-	if(gameCountCheck):
-		for player in player_map.values():
-			if len(team_gamecount)!=0 :
-				for team in team_gamecount:
-					if team[0] == player.team:
-						if team[1]*2 <= player.pa:
-							player.stat()
-						else:
-							del player_map[player.id]
-			else :
-				player.stat()
-	else:
-		for player in player_map.values():
-			if len(team_gamecount)!=0 :
-				for team in team_gamecount:
-					if team[0] == player.team:
+
+	for player in player_map.values():
+		if len(team_gamecount)!=0 :
+			for team in team_gamecount:
+				if team[0] == player.team:
+					if team[1]*2 <= player.pa:
 						player.stat()
-			else :
-				player.stat()
+					else:
+						del player_map[player.id]
+		else :
+			player.stat()
 
 	batting_list = player_map.values()
 
