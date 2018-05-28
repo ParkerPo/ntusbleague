@@ -159,10 +159,10 @@ def calculate_batting_rank(players,year=4):
 		if len(team_gamecount)!=0 :
 			for team in team_gamecount:
 				if team[0] == player.team:
-					if team[1]*2 <= player.pa:
+					# if team[1]*2 <= player.pa:
 						player.stat()
-					else:
-						del player_map[player.id]
+					# else:
+						# del player_map[player.id]
 		else :
 			player.stat()
 
