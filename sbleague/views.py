@@ -85,9 +85,11 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
 
-	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
-	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
-	hr_list = batting_list[0:5]
+	batting_list2 = calculate_batting_rank(players,gameCountCheck=False)
+	batting_list2 = filter(lambda list : not list.name.startswith("OB"),batting_list)
+	batting_list2 = sorted(batting_list2, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+	batting_list2 = sorted(batting_list2, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
+	hr_list = batting_list2[0:5]
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.rbi),int(x.rbi)))
 	rbi_list = batting_list[0:5]
@@ -118,7 +120,8 @@ def index(request) :
 	
 	return render (request, 'sbleague/index.html', context)
 
-def calculate_batting_rank(players,year=4):
+#gameCountCheck =>hr false
+def calculate_batting_rank(players,year=4,gameCountCheck=True):
 	
 	player_map = {}
 	batting_all = Batting.objects.filter(game__gameID__gte=year*1000)
@@ -159,10 +162,13 @@ def calculate_batting_rank(players,year=4):
 		if len(team_gamecount)!=0 :
 			for team in team_gamecount:
 				if team[0] == player.team:
-					if team[1]*2 <= player.pa:
-						player.stat()
+					if(gameCountCheck):
+						if team[1]*2 <= player.pa:
+							player.stat()
+						else:
+							del player_map[player.id]
 					else:
-						del player_map[player.id]
+						player.stat()
 		else :
 			player.stat()
 
