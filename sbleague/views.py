@@ -85,11 +85,16 @@ def index(request) :
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hit),int(x.hit)))
 	hit_list = batting_list[0:5]
 
-	batting_list2 = calculate_batting_rank(players,4,False)
-	batting_list2 = filter(lambda list : not list.name.startswith("OB"),batting_list)
-	batting_list2 = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
-	batting_list2 = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
-	hr_list = batting_list2[0:5]
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
+	hr_list = batting_list[0:5]
+
+
+	batting_list2 = calculate_batting_rank(players,checkGameCount=False)
+	batting_list2 = filter(lambda list : not list.name.startswith("OB"),batting_list2)
+	batting_list2 = sorted(batting_list2, cmp=lambda x,y:cmp(int(x.pa),int(y.pa)))
+	batting_list2 = sorted(batting_list2, cmp=lambda x,y:cmp(int(y.hr),int(x.hr)))
+	hr_list2 = batting_list2[0:5]
 
 	batting_list = sorted(batting_list, cmp=lambda x,y:cmp(int(y.rbi),int(x.rbi)))
 	rbi_list = batting_list[0:5]
@@ -116,7 +121,7 @@ def index(request) :
 	whip_list = pitching_list[0:5]
 	
 
-	context = {'team_list' : team_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list, 'rbi_list': rbi_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list}
+	context = {'team_list' : team_list, 'avg_list': avg_list, 'hit_list': hit_list, 'hr_list': hr_list2, 'rbi_list': rbi_list, 'era_list': era_list, 'win_list': win_list, 'so_list': so_list, 'whip_list': whip_list}
 	
 	return render (request, 'sbleague/index.html', context)
 
@@ -172,7 +177,7 @@ def calculate_batting_rank(players,year=4,checkGameCount=True):
 			if len(team_gamecount)!=0 :
 				for team in team_gamecount:
 					if team[0] == player.team:
-						player.stat()
+							player.stat()
 			else :
 				player.stat()
 
