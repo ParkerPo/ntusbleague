@@ -120,7 +120,7 @@ def index(request) :
 	
 	return render (request, 'sbleague/index.html', context)
 
-def calculate_batting_rank(players,year=4,checkGameCount=True):
+def calculate_batting_rank(players,year=7,checkGameCount=True):
 	
 	player_map = {}
 	batting_all = Batting.objects.filter(game__gameID__gte=year*1000)
@@ -175,7 +175,7 @@ def calculate_batting_rank(players,year=4,checkGameCount=True):
 
 	return batting_list
 
-def calculate_pitching_rank(players,thr=0,year=4):
+def calculate_pitching_rank(players,thr=0,year=7):
 	
 	player_map = {}
 	pitching_all = Pitching.objects.filter(pa__gte=thr,game__gameID__gte=year*1000)
