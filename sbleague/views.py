@@ -254,7 +254,7 @@ def allpitching(request, order="win"):
 	context = {'pitching_list': pitching_list}
 	return render(request , 'sbleague/allpitching.html',context)
 
-def team(request , team_id , order="hit",y=4) :
+def team(request , team_id , order="hit",y=7) :
 	thisteam = Team.objects.get(teamID = team_id)
 	team_info = TeamStat()	#init
 	team_info.name 	 = thisteam.name
@@ -402,7 +402,7 @@ def team(request , team_id , order="hit",y=4) :
 
 	return render(request , 'sbleague/team.html',context)
 
-def allteam(request,pos,order,year=4):
+def allteam(request,pos,order,year=7):
 	teams = Team.objects.filter(current__gt=0)
 	allteam_pit = []
 	allteam_bat = []
