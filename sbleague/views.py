@@ -21,7 +21,7 @@ def index(request) :
 
 	team_list={}
 	
-	games = Game.objects.filter(gameID__gte = 4000)
+	games = Game.objects.filter(gameID__gte = 7000)
 	
 	# --- team ranking
 	teams = Team.objects.filter(current__gte = 1)
